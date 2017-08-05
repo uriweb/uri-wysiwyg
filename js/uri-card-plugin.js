@@ -2,14 +2,6 @@
 
 (function() {
 
-	function escapeQuotes(s) {
-		return s.replace(/"/g, '%25');
-	}
-	function unEscapeQuotes(s) {
-		return s.replace(/%25/g, '"');
-	}
-
-
 	function replaceCardShortcodes( content, shortcodeName ) {
 		var re = new RegExp("\\[" + shortcodeName + "([^\\]]*)\\]", "g");
 		return content.replace( re, function( match ) {
@@ -21,12 +13,12 @@
 	function renderCard( shortcode ) {
 		var parsed, safeData, out;
 
-		parsed = parseShortCodeAttributes( shortcode );
+		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
 
 		out = '<div class="cl-card mceNonEditable" data-shortcode="' + safeData + '">';
 		out += '<h1>' + parsed.title + '</h1>';
-		out += '<p>' + unEscapeQuotes(parsed.body) + '</p>';
+		out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
 		if(parsed.link) {
 			out += '<span class="button">Explore</span>';
 		}
@@ -35,23 +27,6 @@
 		return out;
 	}
 	
-	
-	function parseShortCodeAttributes(sc) {
-		var attributes, atts, x, t;
-					
-		attributes = {};
-		atts = sc.match(/[\w-]+="[^"]*"/gi);
-
-		for ( x in atts ) {
-			t = atts[x].split('=');
-			t[1] = t[1].replace(/\"/gi, '');	
-			attributes[t[0]] = t[1];
-		}
-
-		return attributes;
-	}
-
-
 	function restoreCardShortcodes( content ) {
 		var html, els, i, t;
 		
@@ -77,7 +52,7 @@
 
 
 
-	tinymce.create('tinymce.plugins.uri_wysiwyg', {
+	tinymce.create('tinymce.plugins.uri_wysiwyg_card', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
 		 * This call is done before the editor instance has finished it's initialization so use the onInit event
@@ -114,9 +89,7 @@
 					}
 				});
 				// prevent nested quotes... escape / unescape instead?
-				args.title = unEscapeQuotes(args.title);
-				args.body = unEscapeQuotes(args.body);
-				args.link = unEscapeQuotes(args.link);
+				args = URIWYSIWYG.unEscapeQuotesDeep(args);
 
 				
 				ed.windowManager.open({
@@ -128,9 +101,7 @@
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data.title = escapeQuotes(e.data.title);
-						e.data.body = escapeQuotes(e.data.body);
-						e.data.link = escapeQuotes(e.data.link);
+						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
 						
 						shortcode = generateCardShortcode(e.data);
 						
@@ -166,7 +137,7 @@
 				
 				if ( isCard ) {
 					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
-					attributes = parseShortCodeAttributes(sc);
+					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
 					ed.execCommand('card', attributes);
 				}
 			});
@@ -198,7 +169,7 @@
 			return {
 				longname : 'URI WYSIWYG',
 				author : 'John Pennypacker',
-				authorurl : 'https://www.uri.edu',
+				authorurl : 'https://today.uri.edu',
 				infourl : 'https://www.uri.edu/communications',
 				version : "0.1"
 			};
@@ -208,7 +179,7 @@
 	});
 
 	// Register plugin
-	tinymce.PluginManager.add( 'uri_wysiwyg', tinymce.plugins.uri_wysiwyg );
+	tinymce.PluginManager.add( 'uri_wysiwyg_card', tinymce.plugins.uri_wysiwyg_card );
 
 
 })();
