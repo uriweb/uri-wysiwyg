@@ -12,12 +12,17 @@
 
 
 	function renderButton( shortcode ) {
-		var parsed, safeData, out;
+		var parsed, safeData, classNames, out;
 
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
+		classNames = 'cl-button';
+		
+		if(parsed.prominent) {
+			classNames += ' prominent'
+		}
 
-		out = '<a class="cl-button prominent" data-shortcode="' + safeData + '">';
+		out = '<a class="' + classNames + '" data-shortcode="' + safeData + '">';
 
 		if(parsed.text) {
 			out += parsed.text;
@@ -48,7 +53,14 @@
 	}
 	
 	function generateButtonShortcode(params) {
-		return '[cl-button link="' + params.link + '"]';
+
+		var attributes = [];
+		
+		for(i in params) {
+			attributes.push(i + '="' + params[i] + '"');
+		}
+		
+		return '[cl-button ' + attributes.join(' ') + ']';
 	}
 
 
@@ -92,18 +104,18 @@
 								
 				// prevent nested quotes... escape / unescape instead?
 				args = URIWYSIWYG.unEscapeQuotesDeep(args);
-				
+
 				ed.windowManager.open({
 					title: 'Insert / Update Button',
 					body: [
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
-						{type: 'textbox', name: 'body', label: 'Text', 'placeholder': 'Explore', value: args.text},
+						{type: 'textbox', name: 'text', label: 'Text', 'placeholder': 'Explore', value: args.text},
 						{type: 'textbox', name: 'tooltip', label: 'Tooltip', 'placeholder': '(optional)', value: args.tooltip},
-						{type: 'checkbox', name: 'prominent', label: 'Prominent', value: args.prominent}
+						{type: 'checkbox', name: 'prominent', label: 'Prominent', checked: args.prominent }
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
+						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);
 						shortcode = generateButtonShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
@@ -112,7 +124,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = replaceButtonShortcodes( event.content, 'cl-button' );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-button', renderButton );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

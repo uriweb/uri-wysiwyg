@@ -2,13 +2,6 @@
 
 (function() {
 
-	function replaceCardShortcodes( content, shortcodeName ) {
-		var re = new RegExp("\\[" + shortcodeName + "([^\\]]*)\\]", "g");
-		return content.replace( re, function( match ) {
-			return renderCard( match );
-		});
-	}
-
 
 	function renderCard( shortcode ) {
 		var parsed, safeData, out;
@@ -112,7 +105,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = replaceCardShortcodes( event.content, 'cl-card' );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-card', renderCard );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

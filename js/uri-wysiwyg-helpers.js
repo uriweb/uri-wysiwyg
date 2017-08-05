@@ -4,7 +4,7 @@
 
 class URIWYSIWYG {
 
-	//
+	// escapes quotes on every element in an array (if element is a string)
 	static escapeQuotesDeep(a) {
 		for(i in a) {
 			if(typeof a[i] === 'string') {
@@ -13,12 +13,13 @@ class URIWYSIWYG {
 		}
 		return a;
 	}
-	//
+
+	// replace " with %25
 	static escapeQuotes(s) {
 		return s.replace(/"/g, '%25');
 	}
 	
-	//
+	// unescapes quotes on every element in an array (if element is a string)
 	static unEscapeQuotesDeep(a) {
 		for(i in a) {
 			if(typeof a[i] === 'string') {
@@ -27,12 +28,22 @@ class URIWYSIWYG {
 		}
 		return a;
 	}
-	//
+
+	// replace %25 with "
 	static unEscapeQuotes(s) {
 		return s.replace(/%25/g, '"');
 	}
 	
-	//
+	// replace a button with a callback
+	static replaceShortcodes( content, shortcodeName, callback ) {
+		var re = new RegExp("\\[" + shortcodeName + "([^\\]]*)\\]", "g");
+		return content.replace( re, function( match ) {
+			return callback( match );
+		});
+	}
+
+	
+	// parses a short code and returns an array of attributes
 	static parseShortCodeAttributes(sc) {
 		var attributes, atts, x, t;
 				
