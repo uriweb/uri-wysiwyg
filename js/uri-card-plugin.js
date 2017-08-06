@@ -69,7 +69,7 @@
 				title : 'Card',
 				text : '',
 				cmd : 'card',
-				image : url + '/i/card.png'
+				image : url + '/i/card@2x.png'
 			});
 		
 			// add a js callback for the button
@@ -91,6 +91,11 @@
 				});
 				// prevent nested quotes... escape / unescape instead?
 				args = URIWYSIWYG.unEscapeQuotesDeep(args);
+				
+				var imageEl = '';
+				if(args.img) {
+					imageEl = '<img src="' + args.img + '" alt="' + args.alt + '" />';
+				}
 
 				ed.windowManager.open({
 					title: 'Insert / Update Card',
@@ -101,7 +106,7 @@
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
 						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
-						{type: 'container', label: 'Image Preview', html: '<div id="card-img-preview"><img src="' + args.img + '" alt="' + args.alt + '" /></div>'},
+						{type: 'container', label: ' ', html: '<div id="card-img-preview">' + imageEl + '</div>'},
 						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker}
 					],
 					onsubmit: function(e) {

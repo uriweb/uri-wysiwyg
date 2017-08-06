@@ -83,7 +83,7 @@
 				title : 'Button',
 				text : '',
 				cmd : 'button',
-				image : url + '/i/button.png'
+				image : url + '/i/button@2x.png'
 			});
 		
 			// add a js callback for the button

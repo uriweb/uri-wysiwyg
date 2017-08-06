@@ -1,7 +1,6 @@
 #card-img-preview {
-	border: 1px solid #aaa;
+	text-align: right;
 	height: 100px;
-	width: 100px;
 }
 #card-img-preview img {
 	max-height: 100%;
