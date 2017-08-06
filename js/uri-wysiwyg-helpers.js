@@ -59,30 +59,44 @@ class URIWYSIWYG {
 		return attributes;
 	}
 	
+	// invokes the wp media picker from a tinymce modal
 	static mediaPicker(e) {
 		e.preventDefault();
-		var hidden = jQuery('#imageID');
-		var altText = jQuery('#imageAltText');
-		var picker = wp.media.frames.file_frame = wp.media({
+		var imgurl, altEl, picker, alt;
+		
+		imgurl = document.getElementById('img');
+		altEl = document.getElementById('alt');
+		picker = wp.media.frames.file_frame = wp.media({
 			title: 'Select an image',
 			button: {text: 'Add an image'},
 			multiple: false
-		});
+		});		
+		
 		picker.on('select', function() {
 			var attachment = picker.state().get('selection').first().toJSON();
-			//console.log(attachment);
-			//attachment.sizes.full.url
-			hidden.val(attachment.id);
-			if(!altText.val()){
-				if(attachment.alt)
-					altText.val(attachment.alt);
-				else if(attachment.title)
-					altText.val(attachment.title);
-				else
-					altText.val('');
+			imgurl.value = attachment.sizes.full.url;
+			if(!altEl.value){
+				if(attachment.alt) {
+					alt = attachment.alt;
+				} else if(attachment.title) {
+					alt = attachment.title;
+				} else {
+					alt = '';
+				}
+				altEl.value = alt;
 			}
+			URIWYSIWYG.mediaPickerPreview(imgurl.value, altEl.value);
 		});
 		picker.open();
+	}
+	
+	static mediaPickerPreview(src, alt) {
+		var preview;
+		preview = document.createElement('img');
+		preview.src = src;
+		preview.alt = alt;
+		document.getElementById('card-img-preview').innerHTML = '';
+		document.getElementById('card-img-preview').appendChild(preview);
 	}
 	
 }

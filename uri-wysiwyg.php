@@ -42,17 +42,19 @@ function uri_wysiwyg_register_buttons( $buttons ) {
 // add new buttons
 add_filter( 'mce_buttons', 'uri_wysiwyg_register_buttons' );
  
- 
+
 /**
  * Enqueue a script in the WordPress admin
  * @param int $hook Hook suffix for the current admin page.
  */
-function uri_wysiwyg_add_helper_script( $hook ) {
+function uri_wysiwyg_add_scripts( $hook ) {
 	if ( 'edit.php' === $hook || 1==1) { // @todo: only load on the add/edit screen?
+	  wp_enqueue_style('URIWYSIWYG-admin-styles', plugins_url( '/css/uri-wysiwyg-admin.css', __FILE__ ) );
 		wp_enqueue_script( 'URIWYSIWYG', plugins_url( '/js/uri-wysiwyg-helpers.js', __FILE__ ), array(), '1.0' );
 	}
+
 }
-add_action( 'admin_enqueue_scripts', 'uri_wysiwyg_add_helper_script' );
+add_action( 'admin_enqueue_scripts', 'uri_wysiwyg_add_scripts' );
  
 // add custom css to the WYSIWYG Editor
 if ( is_admin() ){

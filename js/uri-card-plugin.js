@@ -9,6 +9,7 @@
 		safeData = window.encodeURIComponent( shortcode );
 
 		out = '<div class="cl-card mceNonEditable" data-shortcode="' + safeData + '">';
+		out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
 		out += '<h1>' + parsed.title + '</h1>';
 		out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
 		if(parsed.link) {
@@ -37,7 +38,15 @@
 	}
 	
 	function generateCardShortcode(params) {
-		return '[cl-card title="' + params.title + '" body="' + params.body + '" link="' + params.link + '"]';
+
+		var attributes = [];
+		
+		for(i in params) {
+			attributes.push(i + '="' + params[i] + '"');
+		}
+		
+		return '[cl-card ' + attributes.join(' ') + ']';
+
 	}
 
 
@@ -71,7 +80,7 @@
 					args = {title:'', body:'', link:''}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['title', 'body', 'link'];
+				var possibleArgs = ['title', 'body', 'link', 'img', 'alt', 'tooltip'];
 				if(!args.title) {
 					args.title = '';
 				}
@@ -83,7 +92,6 @@
 				// prevent nested quotes... escape / unescape instead?
 				args = URIWYSIWYG.unEscapeQuotesDeep(args);
 
-				
 				ed.windowManager.open({
 					title: 'Insert / Update Card',
 					library: {type: 'image'},
@@ -91,23 +99,15 @@
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
 						{type: 'textbox', multiline: 'true', name: 'body', label: 'Body', value: args.body},
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
-						{type: 'textbox', subtype: 'hidden', name: 'imageid', id: 'imageID'},
-						{
-							type: 'button',
-							label: 'Image',
-							text: 'Choose an image',
-							onclick: URIWYSIWYG.mediaPicker,
-							value: args.image
-						},
-						{type: 'textbox', name: 'imagealttext', label: 'Alt Text', id: 'imageAltText'}
+						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
+						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
+						{type: 'container', label: 'Image Preview', html: '<div id="card-img-preview"><img src="' + args.img + '" alt="' + args.alt + '" /></div>'},
+						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker}
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						console.log(e.data);
 						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
-						
 						shortcode = generateCardShortcode(e.data);
-						
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
 				},
