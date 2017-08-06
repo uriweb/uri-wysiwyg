@@ -2,7 +2,6 @@
 
 (function() {
 
-
 	function renderCard( shortcode ) {
 		var parsed, safeData, out;
 
@@ -87,19 +86,33 @@
 				
 				ed.windowManager.open({
 					title: 'Insert / Update Card',
+					library: {type: 'image'},
 					body: [
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
-						{type: 'textbox', name: 'body', label: 'Body', value: args.body},
-						{type: 'textbox', name: 'link', label: 'Link', value: args.link}
+						{type: 'textbox', multiline: 'true', name: 'body', label: 'Body', value: args.body},
+						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
+						{type: 'textbox', subtype: 'hidden', name: 'imageid', id: 'imageID'},
+						{
+							type: 'button',
+							label: 'Image',
+							text: 'Choose an image',
+							onclick: URIWYSIWYG.mediaPicker,
+							value: args.image
+						},
+						{type: 'textbox', name: 'imagealttext', label: 'Alt Text', id: 'imageAltText'}
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
+						console.log(e.data);
 						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
 						
 						shortcode = generateCardShortcode(e.data);
 						
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
+				},
+				{
+					wp: wp,
 				});
 
 			});

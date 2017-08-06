@@ -59,4 +59,30 @@ class URIWYSIWYG {
 		return attributes;
 	}
 	
+	static mediaPicker(e) {
+		e.preventDefault();
+		var hidden = jQuery('#imageID');
+		var altText = jQuery('#imageAltText');
+		var picker = wp.media.frames.file_frame = wp.media({
+			title: 'Select an image',
+			button: {text: 'Add an image'},
+			multiple: false
+		});
+		picker.on('select', function() {
+			var attachment = picker.state().get('selection').first().toJSON();
+			//console.log(attachment);
+			//attachment.sizes.full.url
+			hidden.val(attachment.id);
+			if(!altText.val()){
+				if(attachment.alt)
+					altText.val(attachment.alt);
+				else if(attachment.title)
+					altText.val(attachment.title);
+				else
+					altText.val('');
+			}
+		});
+		picker.open();
+	}
+	
 }
