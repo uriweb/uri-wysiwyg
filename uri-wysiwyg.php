@@ -55,10 +55,3 @@ function uri_wysiwyg_add_scripts( $hook ) {
 
 }
 add_action( 'admin_enqueue_scripts', 'uri_wysiwyg_add_scripts' );
- 
-// add custom css to the WYSIWYG Editor
-if ( is_admin() ){
-	add_editor_style( plugins_url( 'css/uri-wysiwyg.css?d=' . strtotime('now') , __FILE__ ) );
-}
-
-
