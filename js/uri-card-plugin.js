@@ -13,7 +13,7 @@
 		out += '<h1>' + parsed.title + '</h1>';
 		out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
 		if(parsed.link) {
-			out += '<span class="button">Explore</span>';
+			out += '<span class="cl-button">Explore</span>';
 		}
 		out += '</div>';
 		
@@ -65,15 +65,15 @@
 		init : function(ed, url) {
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('card', {
+			ed.addButton('CLCard', {
 				title : 'Card',
 				text : '',
-				cmd : 'card',
+				cmd : 'CLCard',
 				image : url + '/i/card@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('card', function(args) {
+			ed.addCommand('CLCard', function(args) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -149,7 +149,7 @@
 				if ( isCard ) {
 					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
 					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('card', attributes);
+					ed.execCommand('CLCard', attributes);
 				}
 			});
 

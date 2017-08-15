@@ -79,15 +79,15 @@
 		init : function(ed, url) {
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('button', {
+			ed.addButton('CLButton', {
 				title : 'Button',
 				text : '',
-				cmd : 'button',
+				cmd : 'CLButton',
 				image : url + '/i/button@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('button', function(args) {
+			ed.addCommand('CLButton', function(args) {
 			
 				// create an empty property so nothing is null
 				var possibleArgs = ['link', 'text', 'tooltip', 'prominent'];
@@ -150,7 +150,7 @@
 				if ( isButton ) {
 					sc = window.decodeURIComponent( button.getAttribute('data-shortcode') );
 					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('button', attributes);
+					ed.execCommand('CLButton', attributes);
 				}
 			});
 

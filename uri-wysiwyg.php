@@ -36,7 +36,7 @@ add_filter( 'mce_external_plugins', 'uri_wysiwyg_register_tinymce_plugin' );
  *
  */
 function uri_wysiwyg_register_buttons( $buttons ) {
-	array_push( $buttons, 'card', 'button' );
+	array_push( $buttons, 'CLCard', 'CLButton' );
 	return $buttons;
 }
 // add new buttons
