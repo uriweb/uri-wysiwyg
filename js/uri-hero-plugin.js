@@ -2,33 +2,55 @@
 
 (function() {
 
-	function renderButton( shortcode ) {
-		var parsed, safeData, classes, out;
+	function renderHero( shortcode ) {
+		var parsed, safeData, out;
 
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-        classes = 'mceNonEditable cl-button';
-
-        console.log(parsed);
-        
-        out = '<a data-shortcode="' + safeData + '"';
-        if(parsed.prominent == 'true') {
-            classes += ' prominent';
+                
+		out = '<div class="cl-hero mceNonEditable" data-shortcode="' + safeData + '">';
+        if(parsed.vid) {
+            out += '<div class="overlay">';
         }
-        out += ' class="' + classes + '">';
-        if(!parsed.text) { parsed.text = 'Explore'; }
-        out += parsed.text + '</a>';
+        if(parsed.headline || parsed.subhead || parsed.link) {
+            out += '<div class="block">';
+            if(parsed.headline) { 
+                out += '<h1>' + parsed.headline + '</h1>';
+            }
+            if(parsed.subhead) {
+                out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.subhead) + '</p>';
+            }
+            if(parsed.link) {
+                if(!parsed.button) { parsed.button = 'Explore'; }
+                out += '<a class="cl-button" href="' + parsed.link + '">' + parsed.button + '</a>';
+            }
+            out += '</div>'; // .block
+        }
+        if(parsed.vid) {
+            out += '</div>'; // .overlay
+        }
+            
+        if(parsed.img) {
+            out += '<img src="' + parsed.img + '"';
+            if(parsed.vid) {
+                out += ' id="' + parsed.vid + '" class="poster"';
+            } else if (parsed.dynamic == "true") {
+                out += ' class="dynamic"';
+            } 
+            out += ' alt="' + parsed.alt + '">';
+        }
+		out += '</div>';
 		
 		return out;
 	}
 	
-	function restoreButtonShortcodes( content ) {
+	function restoreHeroShortcodes( content ) {
 		var html, els, i, t;
 		
 		// convert the content string into a DOM tree so we can parse it easily
 		html = document.createElement('div');
 		html.innerHTML = content;
-		els = html.querySelectorAll('.cl-button');
+		els = html.querySelectorAll('.cl-hero');
 		
 		for(i=0; i<els.length; i++) {
 			t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
@@ -39,27 +61,25 @@
 		return html.innerHTML;
 	}
 	
-	function generateButtonShortcode(params) {
+	function generateHeroShortcode(params) {
 
 		var attributes = [];
-		
-        if(!params.text) {
-            params.text = 'Explore';
+
+        if(!params.button) {
+            params.button = 'Explore';
         }
         
 		for(i in params) {
 			attributes.push(i + '="' + params[i] + '"');
 		}
 		
-		return '[cl-button ' + attributes.join(' ') + ']';
+		return '[cl-hero ' + attributes.join(' ') + ']';
 
 	}
 
 
 
-
-
-	tinymce.create('tinymce.plugins.uri_wysiwyg_button', {
+	tinymce.create('tinymce.plugins.uri_wysiwyg_hero', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
 		 * This call is done before the editor instance has finished it's initialization so use the onInit event
@@ -71,22 +91,33 @@
 		init : function(ed, url) {
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('CLButton', {
-				title : 'Button',
+			ed.addButton('CLHero', {
+				title : 'Hero',
 				text : '',
-				cmd : 'CLButton',
-				image : url + '/i/button@2x.png'
+				cmd : 'CLHero',
+				image : url + '/i/hero@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('CLButton', function(args) {
+			ed.addCommand('CLHero', function(args) {
 			
 				// create an empty object if args is empty
 				if(!args) {
 					args = {}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['link', 'text', 'tooltip', 'prominent'];
+				var possibleArgs = [
+                    'img', 
+                    'vid', 
+                    'dynamic', 
+                    'zoom', 
+                    'headline', 
+                    'subhead', 
+                    'link',
+                    'button',
+                    'tooltip',
+                    'alt'
+                ];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
@@ -94,19 +125,33 @@
 				});
 				// prevent nested quotes... escape / unescape instead?
 				args = URIWYSIWYG.unEscapeQuotesDeep(args);
+				
+				var imageEl = '';
+				if(args.img) {
+					imageEl = '<img src="' + args.img + '" alt="' + args.alt + '" />';
+				}
 
 				ed.windowManager.open({
-					title: 'Insert / Update Button',
+					title: 'Insert / Update Hero',
+					library: {type: 'image'},
 					body: [
+                        {type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
+				        {type: 'button', label: 'Image (required)', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
+                        {type: 'checkbox', name: 'dynamic', label: 'Dynamic Zoom', checked: args.dynamic },
+                        {type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
+						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
+                        {type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
+				        {type: 'textbox', name: 'headline', label: 'Headline', value: args.headline},
+                        {type: 'textbox', multiline: 'true', name: 'subhead', label: 'Subheader', value: args.subhead},
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
-						{type: 'textbox', name: 'text', label: 'Text', value: args.text},
-                        {type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip},
-                        {type: 'checkbox', name: 'prominent', label: 'Prominent', checked: args.prominent },
+                        {type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
+                        {type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip}
+
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
-						shortcode = generateButtonShortcode(e.data);
+						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);
+                        shortcode = generateHeroShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
 				},
@@ -117,12 +162,12 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-button', renderButton );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-hero', renderHero );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
-					event.content = restoreButtonShortcodes( event.content );
+					event.content = restoreHeroShortcodes( event.content );
 				}
 			});
 
@@ -131,7 +176,7 @@
 				var isCard = false, card, sc, attributes;
 				card = e.target;
 				while ( isCard === false && card.parentNode ) {
-					if ( card.className.indexOf('cl-button') > -1 ) {
+					if ( card.className.indexOf('cl-hero') > -1 ) {
 						isCard = true;
 					} else {
 						if(card.parentNode) {
@@ -143,7 +188,7 @@
 				if ( isCard ) {
 					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
 					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('CLButton', attributes);
+					ed.execCommand('CLHero', attributes);
 				}
 			});
 
@@ -184,7 +229,7 @@
 	});
 
 	// Register plugin
-	tinymce.PluginManager.add( 'uri_wysiwyg_button', tinymce.plugins.uri_wysiwyg_button );
+	tinymce.PluginManager.add( 'uri_wysiwyg_hero', tinymce.plugins.uri_wysiwyg_hero );
 
 
 })();

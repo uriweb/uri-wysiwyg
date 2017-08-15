@@ -95,8 +95,8 @@ class URIWYSIWYG {
 		preview = document.createElement('img');
 		preview.src = src;
 		preview.alt = alt;
-		document.getElementById('card-img-preview').innerHTML = '';
-		document.getElementById('card-img-preview').appendChild(preview);
+		document.getElementById('wysiwyg-img-preview').innerHTML = '';
+		document.getElementById('wysiwyg-img-preview').appendChild(preview);
 	}
 	
 }
