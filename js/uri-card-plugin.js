@@ -9,12 +9,13 @@
 		safeData = window.encodeURIComponent( shortcode );
 
 		out = '<div class="cl-card mceNonEditable" data-shortcode="' + safeData + '">';
-		out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
+        if(parsed.img) {
+            out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
+        }
 		out += '<h1>' + parsed.title + '</h1>';
 		out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
-		if(parsed.link) {
-			out += '<span class="button">Explore</span>';
-		}
+        if(!parsed.button) { parsed.button = 'Explore'; }
+        out += '<span class="cl-button">' + parsed.button + '</span>';
 		out += '</div>';
 		
 		return out;
@@ -41,6 +42,10 @@
 
 		var attributes = [];
 		
+        if(!params.button) {
+            params.button = 'Explore';
+        }
+        
 		for(i in params) {
 			attributes.push(i + '="' + params[i] + '"');
 		}
@@ -65,22 +70,22 @@
 		init : function(ed, url) {
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('card', {
+			ed.addButton('CLCard', {
 				title : 'Card',
 				text : '',
-				cmd : 'card',
+				cmd : 'CLCard',
 				image : url + '/i/card@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('card', function(args) {
+			ed.addCommand('CLCard', function(args) {
 			
 				// create an empty object if args is empty
 				if(!args) {
 					args = {title:'', body:'', link:''}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['title', 'body', 'link', 'img', 'alt', 'tooltip'];
+				var possibleArgs = ['title', 'body', 'link', 'button', 'img', 'alt', 'tooltip'];
 				if(!args.title) {
 					args.title = '';
 				}
@@ -104,9 +109,10 @@
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
 						{type: 'textbox', multiline: 'true', name: 'body', label: 'Body', value: args.body},
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
+                        {type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
 						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
-						{type: 'container', label: ' ', html: '<div id="card-img-preview">' + imageEl + '</div>'},
+						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
 						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker}
 					],
 					onsubmit: function(e) {
@@ -149,7 +155,7 @@
 				if ( isCard ) {
 					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
 					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('card', attributes);
+					ed.execCommand('CLCard', attributes);
 				}
 			});
 
