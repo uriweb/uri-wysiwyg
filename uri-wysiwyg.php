@@ -4,8 +4,10 @@ Plugin Name: URI WYSIWYG
 Plugin URI: http://www.uri.edu
 Description: Create a set of custom WYSIWYG buttons
 Version: 0.1
-Author: John Pennypacker <jpennypacker@uri.edu>
+Author: URI Web Communications
 Author URI: 
+@author John Pennypacker <jpennypacker@uri.edu>
+@author Brandon Fuller <bjcfuller@uri.edu>
 @see https://codex.wordpress.org/TinyMCE_Custom_Buttons
 */
 
@@ -27,6 +29,8 @@ function uri_wysiwyg_register_tinymce_plugin( $plugin_array ) {
 	$plugin_array['uri_wysiwyg_button'] = plugins_url( '/js/uri-button-plugin.js', __FILE__ );
     // load the custom heros plugin
 	$plugin_array['uri_wysiwyg_hero'] = plugins_url( '/js/uri-hero-plugin.js', __FILE__ );
+    // load the custom notice plugin
+	$plugin_array['uri_wysiwyg_notice'] = plugins_url( '/js/uri-notice-plugin.js', __FILE__ );
 
 	return $plugin_array;
 }
@@ -38,7 +42,7 @@ add_filter( 'mce_external_plugins', 'uri_wysiwyg_register_tinymce_plugin' );
  *
  */
 function uri_wysiwyg_register_buttons( $buttons ) {
-	array_push( $buttons, 'CLCard', 'CLButton', 'CLHero' );
+	array_push( $buttons, 'CLCard', 'CLButton', 'CLHero', 'CLNotice' );
 	return $buttons;
 }
 // add new buttons
