@@ -34,9 +34,11 @@ class URIWYSIWYG {
 		return s.replace(/%25/g, '"');
 	}
 	
-	// replace a button with a callback
+	// replace shortcode with HTML
 	static replaceShortcodes( content, shortcodeName, callback ) {
-		var re = new RegExp("\\[" + shortcodeName + "([^\\]]*)\\]", "g");
+
+		var re = new RegExp("\\[" + shortcodeName + "([^\\]]*)\\](.*)?(\\[/" + shortcodeName + "\\])?", 'g');
+
 		return content.replace( re, function( match ) {
 			return callback( match );
 		});
@@ -45,7 +47,11 @@ class URIWYSIWYG {
 	
 	// parses a short code and returns an array of attributes
 	static parseShortCodeAttributes(sc) {
+	
 		var attributes, atts, x, t;
+
+		console.log(sc);
+
 				
 		attributes = {};
 		atts = sc.match(/[\w-]+="[^"]*"/gi);
