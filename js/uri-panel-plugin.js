@@ -2,36 +2,43 @@
 
 (function() {
 
-	function renderNotice( shortcode ) {
+	function renderPanel( shortcode ) {
 		var parsed, safeData, classes, out;
         
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-        classes = 'mceNonEditable cl-notice';
+        classes = 'mceNonEditable cl-panel';
         
         out = '<div data-shortcode="' + safeData + '"';
-        if(parsed.urgent == 'true') {
-            classes += ' urgent';
+        if(parsed.reverse == 'true') {
+            classes += ' reverse';
         }
         out += ' class="' + classes + '">';
+        out += '<figure>'
+        if(parsed.img) {
+            out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
+        }
+        out += '</figure>';
+        out += '<article>';
         if(parsed.title) {
             out += '<h1>' + parsed.title + '</h1>';
         }
         if(parsed.content) {
             out += '<p>' + parsed.content + '</p>';
         }
+        out += '</article>';
         out += '</div>';
 		
 		return out;
 	}
 	
-	function restoreNoticeShortcodes( content ) {
+	function restorePanelShortcodes( content ) {
 		var html, els, i, t;
 		
 		// convert the content string into a DOM tree so we can parse it easily
 		html = document.createElement('div');
 		html.innerHTML = content;
-		els = html.querySelectorAll('.cl-notice');
+		els = html.querySelectorAll('.cl-panel');
 		
 		for(i=0; i<els.length; i++) {
 			t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
@@ -42,7 +49,7 @@
 		return html.innerHTML;
 	}
 	
-	function generateNoticeShortcode(params) {
+	function generatePanelShortcode(params) {
 
 		var attributes = [];
         
@@ -52,7 +59,7 @@
             }
 		}
 		
-		return '[cl-notice ' + attributes.join(' ') + ']' + params.content + '[/cl-notice]';
+		return '[cl-panel ' + attributes.join(' ') + ']' + params.content + '[/cl-panel]';
 
 	}
 
@@ -60,7 +67,7 @@
 
 
 
-	tinymce.create('tinymce.plugins.uri_wysiwyg_notice', {
+	tinymce.create('tinymce.plugins.uri_wysiwyg_panel', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
 		 * This call is done before the editor instance has finished it's initialization so use the onInit event
@@ -72,22 +79,25 @@
 		init : function(ed, url) {
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('CLNotice', {
-				title : 'Notice',
+			ed.addButton('CLPanel', {
+				title : 'Panel',
 				text : '',
-				cmd : 'CLNotice',
-				image : url + '/i/notice@2x.png'
+				cmd : 'CLPanel',
+				image : url + '/i/panel@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('CLNotice', function(args) {
+			ed.addCommand('CLPanel', function(args) {
 			
 				// create an empty object if args is empty
 				if(!args) {
 					args = {}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['title', 'content', 'urgent'];
+				var possibleArgs = ['img', 'alt', 'title', 'reverse', 'content'];
+				if(!args.title) {
+					args.title = '';
+				}
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
@@ -95,18 +105,27 @@
 				});
 				// prevent nested quotes... escape / unescape instead?
 				args = URIWYSIWYG.unEscapeQuotesDeep(args);
+				
+				var imageEl = '';
+				if(args.img) {
+					imageEl = '<img src="' + args.img + '" alt="' + args.alt + '" />';
+				}
 
 				ed.windowManager.open({
-					title: 'Insert / Update Notice',
+					title: 'Insert / Update Panel',
 					body: [
+                        {type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
+						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
+						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
+                        {type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
                         {type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
-                        {type: 'checkbox', name: 'urgent', label: 'Urgent', checked: args.urgent }
+                        {type: 'checkbox', name: 'reverse', label: 'Reverse', checked: args.reverse }
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
 						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
-						shortcode = generateNoticeShortcode(e.data);
+						shortcode = generatePanelShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
 				},
@@ -117,12 +136,12 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-notice', false, renderNotice );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-panel', false, renderPanel );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
-					event.content = restoreNoticeShortcodes( event.content );
+					event.content = restorePanelShortcodes( event.content );
 				}
 			});
 
@@ -131,7 +150,7 @@
 				var isCard = false, card, sc, attributes;
 				card = e.target;
 				while ( isCard === false && card.parentNode ) {
-					if ( card.className.indexOf('cl-notice') > -1 ) {
+					if ( card.className.indexOf('cl-panel') > -1 ) {
 						isCard = true;
 					} else {
 						if(card.parentNode) {
@@ -143,7 +162,7 @@
 				if ( isCard ) {
 					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
 					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('CLNotice', attributes);
+					ed.execCommand('CLPanel', attributes);
 				}
 			});
 
@@ -184,7 +203,7 @@
 	});
 
 	// Register plugin
-	tinymce.PluginManager.add( 'uri_wysiwyg_notice', tinymce.plugins.uri_wysiwyg_notice );
+	tinymce.PluginManager.add( 'uri_wysiwyg_panel', tinymce.plugins.uri_wysiwyg_panel );
 
 
 })();

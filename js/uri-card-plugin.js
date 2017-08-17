@@ -12,8 +12,12 @@
         if(parsed.img) {
             out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
         }
-		out += '<h1>' + parsed.title + '</h1>';
-		out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
+        if(parsed.title) {
+		  out += '<h1>' + parsed.title + '</h1>';
+        }
+        if(parsed.body) {
+		  out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
+        }
         if(!parsed.button) { parsed.button = 'Explore'; }
         out += '<span class="cl-button">' + parsed.button + '</span>';
 		out += '</div>';
