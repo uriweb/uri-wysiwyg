@@ -4,14 +4,10 @@
 
 	function renderNotice( shortcode ) {
 		var parsed, safeData, classes, out;
-
-        console.log(shortcode);
         
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
         classes = 'mceNonEditable cl-notice';
-
-        console.log(parsed);
         
         out = '<div data-shortcode="' + safeData + '"';
         if(parsed.urgent == 'true') {
@@ -117,7 +113,7 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-notice', renderNotice );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-notice', false, renderNotice );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

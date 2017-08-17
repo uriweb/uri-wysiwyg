@@ -8,8 +8,6 @@
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
         classes = 'mceNonEditable cl-button';
-
-        console.log(parsed);
         
         out = '<a data-shortcode="' + safeData + '"';
         if(parsed.prominent == 'true') {
@@ -117,7 +115,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-button', renderButton );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-button', true, renderButton );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

@@ -34,25 +34,29 @@ class URIWYSIWYG {
 		return s.replace(/%25/g, '"');
 	}
 	
-	// replace shortcode with HTML
-	static replaceShortcodes( content, shortcodeName, callback ) {
+	/* Replace shortcode with HTML
+     * @param content string The editor content
+     * @param shortcodeName string The shortcode name
+     * @param selfclosing bool Whether the shortcode is self-closing
+     * @param callback function The callback function
+     */
+	static replaceShortcodes( content, shortcodeName, selfclosing, callback ) {
 
-		var re = new RegExp("\\[" + shortcodeName + "([^\\]]*)\\](.*)?(\\[/" + shortcodeName + "\\])?", 'g');
-
+		var re = selfclosing ? new RegExp('\\[' + shortcodeName + '([^\\]]*)\\]', 'g') : new RegExp('\\[' + shortcodeName + '.+?\\[/' + shortcodeName + '\\]', 'g');
+        
 		return content.replace( re, function( match ) {
 			return callback( match );
 		});
 	}
 
 	
-	// parses a short code and returns an array of attributes
+	/* Parses a short code and returns an array of attributes
+     * @param sc string The shortcode
+     */
 	static parseShortCodeAttributes(sc) {
 	
-		var attributes, atts, x, t;
-
-		console.log(sc);
-
-				
+		var attributes, atts, innerContent, x, t;
+        
 		attributes = {};
 		atts = sc.match(/[\w-]+="[^"]*"/gi);
 
@@ -61,7 +65,12 @@ class URIWYSIWYG {
 			t[1] = t[1].replace(/\"/gi, '');	
 			attributes[t[0]] = t[1];
 		}
-
+        
+        innerContent = sc.match(/\].+?\[/gi);
+        if (innerContent) {
+            attributes['content'] = innerContent[0].replace(/^\]|\[$/gi,'').trim();
+        }
+                
 		return attributes;
 	}
 	

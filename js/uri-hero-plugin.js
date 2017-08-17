@@ -162,7 +162,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-hero', renderHero );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-hero', true, renderHero );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

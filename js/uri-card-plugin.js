@@ -129,7 +129,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-card', renderCard );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-card', true, renderCard );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
