@@ -51,6 +51,8 @@
                 attributes.push(i + '="' + params[i] + '"');
             }
 		}
+        
+        console.log('generate content', params.content);
 		
 		return '[cl-notice ' + attributes.join(' ') + ']' + params.content + '[/cl-notice]';
 
