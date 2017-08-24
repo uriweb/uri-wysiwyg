@@ -2,58 +2,41 @@
 
 (function() {
 
-    var cName = 'cl-panel',
-        wName = 'CLPanel';
+    var cName = 'cl-video',
+        wName = 'CLVideo';
     
-	function renderPanel( shortcode ) {
-		var parsed, safeData, classes, out;
-        
+	function renderVideo( shortcode ) {
+		var parsed, safeData, out;
+
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-        classes = 'mceNonEditable ' + cName;
-        
-        out = '<div data-shortcode="' + safeData + '"';
-        if(parsed.reverse == 'true') {
-            classes += ' reverse';
+                
+		out = '<div class="' + cName + ' mceNonEditable" data-shortcode="' + safeData + '">';
+        out += '<img id="' + parsed.vid + '" src="' + parsed.img + '" alt="' + parsed.alt + '"';
+        if(parsed.aspect){
+            out += ' data-aspect="' + parsed.aspect + '"';
         }
-        out += ' class="' + classes + '">';
-        out += '<figure>'
-        if(parsed.img) {
-            out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
-        }
-        out += '</figure>';
-        out += '<article>';
-        if(parsed.title) {
-            out += '<h1>' + parsed.title + '</h1>';
-        }
-        if(parsed.content) {
-            out += '<p>' + parsed.content + '</p>';
-        }
-        out += '</article>';
-        out += '</div>';
+        out += '>';
+		out += '</div>';
 		
 		return out;
 	}
 	
-	function generatePanelShortcode(params) {
+	function generateVideoShortcode(params) {
 
 		var attributes = [];
         
 		for(i in params) {
-            if(i != 'content') {
-                attributes.push(i + '="' + params[i] + '"');
-            }
+			attributes.push(i + '="' + params[i] + '"');
 		}
 		
-		return '[' + cName + ' ' + attributes.join(' ') + ']' + params.content + '[/' + cName + ']';
+		return '[' + cName + ' ' + attributes.join(' ') + ']';
 
 	}
 
 
 
-
-
-	tinymce.create('tinymce.plugins.uri_wysiwyg_panel', {
+	tinymce.create('tinymce.plugins.uri_wysiwyg_video', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
 		 * This call is done before the editor instance has finished it's initialization so use the onInit event
@@ -66,10 +49,10 @@
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
 			ed.addButton(wName, {
-				title : 'Panel',
+				title : 'Video',
 				text : '',
 				cmd : wName,
-				image : url + '/i/panel@2x.png'
+				image : url + '/i/video@2x.png'
 			});
 		
 			// add a js callback for the button
@@ -80,10 +63,7 @@
 					args = {}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['img', 'alt', 'title', 'reverse', 'content'];
-				if(!args.title) {
-					args.title = '';
-				}
+				var possibleArgs = ['img', 'vid', 'alt', 'aspect'];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
@@ -98,20 +78,21 @@
 				}
 
 				ed.windowManager.open({
-					title: 'Insert / Update Panel',
+					title: 'Insert / Update Hero',
+					library: {type: 'image'},
 					body: [
-                        {type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
+                        {type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
+				        {type: 'button', label: 'Image (required)', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
-						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
-                        {type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
-						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
-                        {type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
-                        {type: 'checkbox', name: 'reverse', label: 'Reverse', checked: args.reverse }
+                        {type: 'textbox', name: 'alt', id: 'alt', label: 'Image Alt Text', value: args.alt},
+                        {type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
+                        {type: 'textbox', name: 'aspect', label: 'Aspect Ratio', value: args.aspect}
+
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
-						shortcode = generatePanelShortcode(e.data);
+						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);
+                        shortcode = generateVideoShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
 				},
@@ -120,9 +101,9 @@
 				});
 
 			});
-            
+
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderPanel );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderVideo );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
@@ -173,7 +154,7 @@
 	});
 
 	// Register plugin
-	tinymce.PluginManager.add( 'uri_wysiwyg_panel', tinymce.plugins.uri_wysiwyg_panel );
+	tinymce.PluginManager.add( 'uri_wysiwyg_video', tinymce.plugins.uri_wysiwyg_video );
 
 
 })();

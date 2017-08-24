@@ -28,23 +28,6 @@
 		return out;
 	}
 	
-	function restoreBoxoutShortcodes( content ) {
-		var html, els, i, t;
-		
-		// convert the content string into a DOM tree so we can parse it easily
-		html = document.createElement('div');
-		html.innerHTML = content;
-		els = html.querySelectorAll('.cl-boxout');
-		
-		for(i=0; i<els.length; i++) {
-			t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
-			els[i].parentNode.replaceChild(t, els[i]);
-		}
-		
-		//return the DOM tree as a string
-		return html.innerHTML;
-	}
-	
 	function generateBoxoutShortcode(params) {
 
 		var attributes = [];
@@ -57,7 +40,7 @@
         
         console.log('generate content', params.content);
 		
-		return '[cl-boxout ' + attributes.join(' ') + ']' + params.content + '[/cl-boxout]';
+		return '[' + cName + ' ' + attributes.join(' ') + ']' + params.content + '[/' + cName + ']';
 
 	}
 

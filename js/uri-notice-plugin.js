@@ -1,13 +1,16 @@
 // https://code.tutsplus.com/tutorials/guide-to-creating-your-own-wordpress-editor-buttons--wp-30182
 
 (function() {
+    
+    var cName = 'cl-notice',
+        wName = 'CLNotice';
 
 	function renderNotice( shortcode ) {
 		var parsed, safeData, classes, out;
         
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-        classes = 'mceNonEditable cl-notice';
+        classes = 'mceNonEditable ' + cName;
         
         out = '<div data-shortcode="' + safeData + '"';
         if(parsed.urgent == 'true') {
@@ -25,23 +28,6 @@
 		return out;
 	}
 	
-	function restoreNoticeShortcodes( content ) {
-		var html, els, i, t;
-		
-		// convert the content string into a DOM tree so we can parse it easily
-		html = document.createElement('div');
-		html.innerHTML = content;
-		els = html.querySelectorAll('.cl-notice');
-		
-		for(i=0; i<els.length; i++) {
-			t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
-			els[i].parentNode.replaceChild(t, els[i]);
-		}
-		
-		//return the DOM tree as a string
-		return html.innerHTML;
-	}
-	
 	function generateNoticeShortcode(params) {
 
 		var attributes = [];
@@ -51,10 +37,8 @@
                 attributes.push(i + '="' + params[i] + '"');
             }
 		}
-        
-        console.log('generate content', params.content);
-		
-		return '[cl-notice ' + attributes.join(' ') + ']' + params.content + '[/cl-notice]';
+        		
+		return '[' + cName + ' ' + attributes.join(' ') + ']' + params.content + '[/' + cName + ']';
 
 	}
 
@@ -74,15 +58,15 @@
 		init : function(ed, url) {
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('CLNotice', {
+			ed.addButton(wName, {
 				title : 'Notice',
 				text : '',
-				cmd : 'CLNotice',
+				cmd : wName,
 				image : url + '/i/notice@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('CLNotice', function(args) {
+			ed.addCommand(wName, function(args) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -119,34 +103,18 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-notice', false, renderNotice );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderNotice );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
-					event.content = restoreNoticeShortcodes( event.content );
+					event.content = URIWYSIWYG.restoreShortcodes( event.content, cName );
 				}
 			});
 
 			//open popup on placeholder double click
-			ed.on('DblClick',function(e) {
-				var isCard = false, card, sc, attributes;
-				card = e.target;
-				while ( isCard === false && card.parentNode ) {
-					if ( card.className.indexOf('cl-notice') > -1 ) {
-						isCard = true;
-					} else {
-						if(card.parentNode) {
-							card = card.parentNode;
-						}
-					}
-				}
-				
-				if ( isCard ) {
-					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
-					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('CLNotice', attributes);
-				}
+			ed.on('DblClick',function( event ) {
+				URIWYSIWYG.openPopup( event.target, ed, cName, wName);
 			});
 
 		},

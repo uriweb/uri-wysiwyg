@@ -79,7 +79,6 @@ class URIWYSIWYG {
      * @param sc string The shortcode name
      */
     static restoreShortcodes( content, sc ) {
-        console.log('restoring', sc);
 		var html, els, i, t;
 		
 		// convert the content string into a DOM tree so we can parse it easily
@@ -138,7 +137,6 @@ class URIWYSIWYG {
 	}
     
     static openPopup(target, ed, cName, wName) {
-        console.log('popup', cName);
         var isTarget = false, sc, attributes;
         while ( isTarget === false && target.parentNode ) {
             if ( target.className.indexOf(cName) > -1 ) {

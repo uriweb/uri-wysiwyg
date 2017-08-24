@@ -11,7 +11,7 @@
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
                 
-		out = '<div class="cl-hero mceNonEditable" data-shortcode="' + safeData + '">';
+		out = '<div class="' + cName + ' mceNonEditable" data-shortcode="' + safeData + '">';
         if(parsed.vid) {
             out += '<div class="overlay">';
         }
@@ -47,23 +47,6 @@
 		return out;
 	}
 	
-	function restoreHeroShortcodes( content ) {
-		var html, els, i, t;
-		
-		// convert the content string into a DOM tree so we can parse it easily
-		html = document.createElement('div');
-		html.innerHTML = content;
-		els = html.querySelectorAll('.cl-hero');
-		
-		for(i=0; i<els.length; i++) {
-			t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
-			els[i].parentNode.replaceChild(t, els[i]);
-		}
-		
-		//return the DOM tree as a string
-		return html.innerHTML;
-	}
-	
 	function generateHeroShortcode(params) {
 
 		var attributes = [];
@@ -76,7 +59,7 @@
 			attributes.push(i + '="' + params[i] + '"');
 		}
 		
-		return '[cl-hero ' + attributes.join(' ') + ']';
+		return '[' + cName + ' ' + attributes.join(' ') + ']';
 
 	}
 

@@ -35,6 +35,8 @@ function uri_wysiwyg_register_tinymce_plugin( $plugin_array ) {
 	$plugin_array['uri_wysiwyg_notice'] = plugins_url( '/js/uri-notice-plugin.js', __FILE__ );
     // load the custom panel plugin
 	$plugin_array['uri_wysiwyg_panel'] = plugins_url( '/js/uri-panel-plugin.js', __FILE__ );
+    // load the custom video plugin
+	$plugin_array['uri_wysiwyg_video'] = plugins_url( '/js/uri-video-plugin.js', __FILE__ );
 
 	return $plugin_array;
 }
@@ -46,7 +48,7 @@ add_filter( 'mce_external_plugins', 'uri_wysiwyg_register_tinymce_plugin' );
  *
  */
 function uri_wysiwyg_register_buttons( $buttons ) {
-	array_push( $buttons, 'CLBoxout', 'CLButton', 'CLCard', 'CLHero', 'CLNotice', 'CLPanel' );
+	array_push( $buttons, 'CLBoxout', 'CLButton', 'CLCard', 'CLHero', 'CLNotice', 'CLPanel', 'CLVideo' );
 	return $buttons;
 }
 // add new buttons
