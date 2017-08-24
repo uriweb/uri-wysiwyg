@@ -1,14 +1,16 @@
 // https://code.tutsplus.com/tutorials/guide-to-creating-your-own-wordpress-editor-buttons--wp-30182
 
 (function() {
+    
+    var cardTypes = ['cl-card', 'cl-dcard'];
 
 	function renderCard( shortcode ) {
 		var parsed, safeData, out;
 
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-
-		out = '<div class="cl-card mceNonEditable" data-shortcode="' + safeData + '">';
+        
+		out = '<div class="' + parsed.style + ' mceNonEditable" data-shortcode="' + safeData + '">';
         if(parsed.img) {
             out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
         }
@@ -18,8 +20,10 @@
         if(parsed.body) {
 		  out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
         }
-        if(!parsed.button) { parsed.button = 'Explore'; }
-        out += '<span class="cl-button">' + parsed.button + '</span>';
+        if(parsed.style == 'cl-card') {
+            if(!parsed.button) { parsed.button = 'Explore'; }
+            out += '<span class="cl-button">' + parsed.button + '</span>';
+        }
 		out += '</div>';
 		
 		return out;
@@ -31,12 +35,14 @@
 		// convert the content string into a DOM tree so we can parse it easily
 		html = document.createElement('div');
 		html.innerHTML = content;
-		els = html.querySelectorAll('.cl-card');
-		
-		for(i=0; i<els.length; i++) {
-			t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
-			els[i].parentNode.replaceChild(t, els[i]);
-		}
+        
+        cardTypes.forEach(function(s) {
+            els = html.querySelectorAll('.' + s);
+            for(i=0; i<els.length; i++) {
+                t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
+                els[i].parentNode.replaceChild(t, els[i]);
+            }
+        });
 		
 		//return the DOM tree as a string
 		return html.innerHTML;
@@ -51,10 +57,10 @@
         }
         
 		for(i in params) {
-			attributes.push(i + '="' + params[i] + '"');
+            attributes.push(i + '="' + params[i] + '"');
 		}
 		
-		return '[cl-card ' + attributes.join(' ') + ']';
+		return '[' + params.style + ' ' + attributes.join(' ') + ']';
 
 	}
 
@@ -72,6 +78,8 @@
 		 * @param {string} url Absolute URL to where the plugin is located.
 		 */
 		init : function(ed, url) {
+            
+            var style;
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
 			ed.addButton('CLCard', {
@@ -86,7 +94,7 @@
 			
 				// create an empty object if args is empty
 				if(!args) {
-					args = {title:'', body:'', link:''}
+					args = {style:'', title:'', body:'', link:''}
 				}
 				// create an empty property so nothing is null
 				var possibleArgs = ['title', 'body', 'link', 'button', 'img', 'alt', 'tooltip'];
@@ -110,10 +118,16 @@
 					title: 'Insert / Update Card',
 					library: {type: 'image'},
 					body: [
+                        {type: 'listbox', name: 'style', label: 'Card Style', value: args.style, 'values': [
+                            {text: 'Standard', value: 'cl-card'},
+                            {text: 'Detail', value: 'cl-dcard'}
+                            ]
+                        },
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
 						{type: 'textbox', multiline: 'true', name: 'body', label: 'Body', value: args.body},
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
                         {type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
+                        {type: 'container', label: ' ', html: 'Note: Only standard cards display button text.'},
 						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
 						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
@@ -133,7 +147,9 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-card', true, renderCard );
+                cardTypes.forEach(function(s) {
+				    event.content = URIWYSIWYG.replaceShortcodes( event.content, s, true, renderCard );
+                });
 			});
 
 			ed.on( 'PostProcess', function( event ) {
@@ -147,7 +163,7 @@
 				var isCard = false, card, sc, attributes;
 				card = e.target;
 				while ( isCard === false && card.parentNode ) {
-					if ( card.className.indexOf('cl-card') > -1 ) {
+					if ( card.className.indexOf('cl-card') > -1 || card.className.indexOf('cl-dcard') > -1 ) {
 						isCard = true;
 					} else {
 						if(card.parentNode) {
