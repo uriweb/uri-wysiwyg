@@ -2,12 +2,15 @@
 
 (function() {
 
+    var cName = 'cl-boxout',
+        wName = 'CLBoxout';
+    
 	function renderBoxout( shortcode ) {
 		var parsed, safeData, classes, out;
         
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-        classes = 'mceNonEditable cl-boxout';
+        classes = 'mceNonEditable ' + cName;
         
         out = '<div data-shortcode="' + safeData + '"';
         if(parsed.float != 'auto') {
@@ -74,15 +77,15 @@
 		init : function(ed, url) {
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('CLBoxout', {
+			ed.addButton(wName, {
 				title : 'Boxout',
 				text : '',
-				cmd : 'CLBoxout',
+				cmd : wName,
 				image : url + '/i/boxout@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('CLBoxout', function(args) {
+			ed.addCommand(wName, function(args) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -124,34 +127,18 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-boxout', false, renderBoxout );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderBoxout );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
-					event.content = restoreBoxoutShortcodes( event.content );
+					event.content = URIWYSIWYG.restoreShortcodes( event.content, cName );
 				}
 			});
 
 			//open popup on placeholder double click
-			ed.on('DblClick',function(e) {
-				var isCard = false, card, sc, attributes;
-				card = e.target;
-				while ( isCard === false && card.parentNode ) {
-					if ( card.className.indexOf('cl-boxout') > -1 ) {
-						isCard = true;
-					} else {
-						if(card.parentNode) {
-							card = card.parentNode;
-						}
-					}
-				}
-				
-				if ( isCard ) {
-					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
-					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('CLBoxout', attributes);
-				}
+			ed.on('DblClick',function( event ) {
+				URIWYSIWYG.openPopup( event.target, ed, cName, wName);
 			});
 
 		},

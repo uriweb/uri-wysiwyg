@@ -2,6 +2,9 @@
 
 (function() {
 
+    var cName = 'cl-hero',
+        wName = 'CLHero';
+    
 	function renderHero( shortcode ) {
 		var parsed, safeData, out;
 
@@ -91,15 +94,15 @@
 		init : function(ed, url) {
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('CLHero', {
+			ed.addButton(wName, {
 				title : 'Hero',
 				text : '',
-				cmd : 'CLHero',
+				cmd : wName,
 				image : url + '/i/hero@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('CLHero', function(args) {
+			ed.addCommand(wName, function(args) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -162,34 +165,18 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-hero', true, renderHero );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderHero );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
-					event.content = restoreHeroShortcodes( event.content );
+					event.content = URIWYSIWYG.restoreShortcodes( event.content, cName );
 				}
 			});
 
 			//open popup on placeholder double click
-			ed.on('DblClick',function(e) {
-				var isCard = false, card, sc, attributes;
-				card = e.target;
-				while ( isCard === false && card.parentNode ) {
-					if ( card.className.indexOf('cl-hero') > -1 ) {
-						isCard = true;
-					} else {
-						if(card.parentNode) {
-							card = card.parentNode;
-						}
-					}
-				}
-				
-				if ( isCard ) {
-					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
-					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('CLHero', attributes);
-				}
+			ed.on('DblClick',function( event ) {
+				URIWYSIWYG.openPopup( event.target, ed, cName, wName);
 			});
 
 		},

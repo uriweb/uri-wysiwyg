@@ -73,7 +73,30 @@ class URIWYSIWYG {
                 
 		return attributes;
 	}
-	
+    
+    /* Replace HTML with shortcode
+     * @param content string The editor content
+     * @param sc string The shortcode name
+     */
+    static restoreShortcodes( content, sc ) {
+        console.log('restoring', sc);
+		var html, els, i, t;
+		
+		// convert the content string into a DOM tree so we can parse it easily
+		html = document.createElement('div');
+		html.innerHTML = content;
+        els = html.querySelectorAll('.' + sc);
+        
+        for(i=0; i<els.length; i++) {
+            t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
+            els[i].parentNode.replaceChild(t, els[i]);
+        }
+		
+		//return the DOM tree as a string
+		return html.innerHTML;
+	}
+    
+    
 	// invokes the wp media picker from a tinymce modal
 	static mediaPicker(e) {
 		e.preventDefault();
@@ -113,5 +136,25 @@ class URIWYSIWYG {
 		document.getElementById('wysiwyg-img-preview').innerHTML = '';
 		document.getElementById('wysiwyg-img-preview').appendChild(preview);
 	}
+    
+    static openPopup(target, ed, cName, wName) {
+        console.log('popup', cName);
+        var isTarget = false, sc, attributes;
+        while ( isTarget === false && target.parentNode ) {
+            if ( target.className.indexOf(cName) > -1 ) {
+                isTarget = true;
+            } else {
+                if(target.parentNode) {
+                    target = target.parentNode;
+                }
+            }
+        }
+
+        if ( isTarget ) {
+            sc = window.decodeURIComponent( target.getAttribute('data-shortcode') );
+            attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
+            ed.execCommand(wName, attributes);
+        }
+    }
 	
 }

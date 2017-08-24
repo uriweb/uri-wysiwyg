@@ -2,7 +2,8 @@
 
 (function() {
     
-    var cardTypes = ['cl-card', 'cl-dcard'];
+    var cNames = ['cl-card', 'cl-dcard'],
+        wName = 'CLCard';
 
 	function renderCard( shortcode ) {
 		var parsed, safeData, out;
@@ -27,25 +28,6 @@
 		out += '</div>';
 		
 		return out;
-	}
-	
-	function restoreCardShortcodes( content ) {
-		var html, els, i, t;
-		
-		// convert the content string into a DOM tree so we can parse it easily
-		html = document.createElement('div');
-		html.innerHTML = content;
-        
-        cardTypes.forEach(function(s) {
-            els = html.querySelectorAll('.' + s);
-            for(i=0; i<els.length; i++) {
-                t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
-                els[i].parentNode.replaceChild(t, els[i]);
-            }
-        });
-		
-		//return the DOM tree as a string
-		return html.innerHTML;
 	}
 	
 	function generateCardShortcode(params) {
@@ -82,15 +64,15 @@
             var style;
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('CLCard', {
+			ed.addButton(wName, {
 				title : 'Card',
 				text : '',
-				cmd : 'CLCard',
+				cmd : wName,
 				image : url + '/i/card@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('CLCard', function(args) {
+			ed.addCommand(wName, function(args) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -147,36 +129,24 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-                cardTypes.forEach(function(s) {
+                cNames.forEach(function(s) {
 				    event.content = URIWYSIWYG.replaceShortcodes( event.content, s, true, renderCard );
                 });
 			});
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
-					event.content = restoreCardShortcodes( event.content );
+                    cNames.forEach(function(s) {
+					   event.content = URIWYSIWYG.restoreShortcodes( event.content, s );
+                    });
 				}
 			});
 
 			//open popup on placeholder double click
-			ed.on('DblClick',function(e) {
-				var isCard = false, card, sc, attributes;
-				card = e.target;
-				while ( isCard === false && card.parentNode ) {
-					if ( card.className.indexOf('cl-card') > -1 || card.className.indexOf('cl-dcard') > -1 ) {
-						isCard = true;
-					} else {
-						if(card.parentNode) {
-							card = card.parentNode;
-						}
-					}
-				}
-				
-				if ( isCard ) {
-					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
-					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('CLCard', attributes);
-				}
+			ed.on('DblClick',function( event ) {
+                cNames.forEach(function(s) {
+				    URIWYSIWYG.openPopup( event.target, ed, s, wName);
+                });
 			});
 
 		},
