@@ -23,10 +23,12 @@ function uri_wysiwyg_register_tinymce_plugin( $plugin_array ) {
 	// load up the noneditable plugin from TinyMCE
 	$plugin_array['noneditable'] = plugins_url( '/js/noneditable/plugin.min.js', __FILE__ );
 
-	// load the custom cards plugin
-	$plugin_array['uri_wysiwyg_card'] = plugins_url( '/js/uri-card-plugin.js', __FILE__ );
+    // load the custom boxout plugin
+	$plugin_array['uri_wysiwyg_boxout'] = plugins_url( '/js/uri-boxout-plugin.js', __FILE__ );
 	// load the custom buttons plugin
 	$plugin_array['uri_wysiwyg_button'] = plugins_url( '/js/uri-button-plugin.js', __FILE__ );
+    // load the custom cards plugin
+	$plugin_array['uri_wysiwyg_card'] = plugins_url( '/js/uri-card-plugin.js', __FILE__ );
     // load the custom heros plugin
 	$plugin_array['uri_wysiwyg_hero'] = plugins_url( '/js/uri-hero-plugin.js', __FILE__ );
     // load the custom notice plugin
@@ -44,7 +46,7 @@ add_filter( 'mce_external_plugins', 'uri_wysiwyg_register_tinymce_plugin' );
  *
  */
 function uri_wysiwyg_register_buttons( $buttons ) {
-	array_push( $buttons, 'CLCard', 'CLButton', 'CLHero', 'CLNotice', 'CLPanel' );
+	array_push( $buttons, 'CLBoxout', 'CLButton', 'CLCard', 'CLHero', 'CLNotice', 'CLPanel' );
 	return $buttons;
 }
 // add new buttons

@@ -1,66 +1,60 @@
 // https://code.tutsplus.com/tutorials/guide-to-creating-your-own-wordpress-editor-buttons--wp-30182
 
 (function() {
-    
-    var cardTypes = ['cl-card', 'cl-dcard'];
 
-	function renderCard( shortcode ) {
-		var parsed, safeData, out;
-
+	function renderBoxout( shortcode ) {
+		var parsed, safeData, classes, out;
+        
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
+        classes = 'mceNonEditable cl-boxout';
         
-		out = '<div class="' + parsed.style + ' mceNonEditable" data-shortcode="' + safeData + '">';
-        if(parsed.img) {
-            out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
+        out = '<div data-shortcode="' + safeData + '"';
+        if(parsed.float != 'auto') {
+            classes += ' ' + parsed.float;
         }
+        out += ' class="' + classes + '">';
         if(parsed.title) {
-		  out += '<h1>' + parsed.title + '</h1>';
+            out += '<h1>' + parsed.title + '</h1>';
         }
-        if(parsed.body) {
-		  out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
+        if(parsed.content) {
+            out += '<p>' + parsed.content + '</p>';
         }
-        if(parsed.style == 'cl-card') {
-            if(!parsed.button) { parsed.button = 'Explore'; }
-            out += '<span class="cl-button">' + parsed.button + '</span>';
-        }
-		out += '</div>';
+        out += '</div>';
 		
 		return out;
 	}
 	
-	function restoreCardShortcodes( content ) {
+	function restoreBoxoutShortcodes( content ) {
 		var html, els, i, t;
 		
 		// convert the content string into a DOM tree so we can parse it easily
 		html = document.createElement('div');
 		html.innerHTML = content;
-        
-        cardTypes.forEach(function(s) {
-            els = html.querySelectorAll('.' + s);
-            for(i=0; i<els.length; i++) {
-                t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
-                els[i].parentNode.replaceChild(t, els[i]);
-            }
-        });
+		els = html.querySelectorAll('.cl-boxout');
+		
+		for(i=0; i<els.length; i++) {
+			t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
+			els[i].parentNode.replaceChild(t, els[i]);
+		}
 		
 		//return the DOM tree as a string
 		return html.innerHTML;
 	}
 	
-	function generateCardShortcode(params) {
+	function generateBoxoutShortcode(params) {
 
 		var attributes = [];
-		
-        if(!params.button) {
-            params.button = 'Explore';
-        }
         
 		for(i in params) {
-            attributes.push(i + '="' + params[i] + '"');
+            if(i != 'content') {
+                attributes.push(i + '="' + params[i] + '"');
+            }
 		}
+        
+        console.log('generate content', params.content);
 		
-		return '[' + params.style + ' ' + attributes.join(' ') + ']';
+		return '[cl-boxout ' + attributes.join(' ') + ']' + params.content + '[/cl-boxout]';
 
 	}
 
@@ -68,7 +62,7 @@
 
 
 
-	tinymce.create('tinymce.plugins.uri_wysiwyg_card', {
+	tinymce.create('tinymce.plugins.uri_wysiwyg_boxout', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
 		 * This call is done before the editor instance has finished it's initialization so use the onInit event
@@ -78,29 +72,24 @@
 		 * @param {string} url Absolute URL to where the plugin is located.
 		 */
 		init : function(ed, url) {
-            
-            var style;
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
-			ed.addButton('CLCard', {
-				title : 'Card',
+			ed.addButton('CLBoxout', {
+				title : 'Boxout',
 				text : '',
-				cmd : 'CLCard',
-				image : url + '/i/card@2x.png'
+				cmd : 'CLBoxout',
+				image : url + '/i/boxout@2x.png'
 			});
 		
 			// add a js callback for the button
-			ed.addCommand('CLCard', function(args) {
+			ed.addCommand('CLBoxout', function(args) {
 			
 				// create an empty object if args is empty
 				if(!args) {
-					args = {style:'', title:'', body:'', link:''}
+					args = {}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['title', 'body', 'link', 'button', 'img', 'alt', 'tooltip'];
-				if(!args.title) {
-					args.title = '';
-				}
+				var possibleArgs = ['title', 'content', 'float'];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
@@ -108,35 +97,23 @@
 				});
 				// prevent nested quotes... escape / unescape instead?
 				args = URIWYSIWYG.unEscapeQuotesDeep(args);
-				
-				var imageEl = '';
-				if(args.img) {
-					imageEl = '<img src="' + args.img + '" alt="' + args.alt + '" />';
-				}
 
 				ed.windowManager.open({
-					title: 'Insert / Update Card',
-					library: {type: 'image'},
+					title: 'Insert / Update Boxout',
 					body: [
-                        {type: 'listbox', name: 'style', label: 'Card Style', value: args.style, 'values': [
-                            {text: 'Standard', value: 'cl-card'},
-                            {text: 'Detail', value: 'cl-dcard'}
+						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
+                        {type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
+                        {type: 'listbox', name: 'float', label: 'Alignment', value: args.float, 'values': [
+                            {text: 'Auto', value: 'auto'},
+                            {text: 'Left', value: 'left'},
+                            {text: 'Right', value: 'right'}
                             ]
                         },
-						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
-						{type: 'textbox', multiline: 'true', name: 'body', label: 'Body', value: args.body},
-						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
-                        {type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
-                        {type: 'container', label: ' ', html: 'Only standard cards display button text.'},
-						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
-						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
-						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
-						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker}
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
 						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
-						shortcode = generateCardShortcode(e.data);
+						shortcode = generateBoxoutShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
 				},
@@ -145,16 +122,14 @@
 				});
 
 			});
-
+            
 			ed.on( 'BeforeSetContent', function( event ) {
-                cardTypes.forEach(function(s) {
-				    event.content = URIWYSIWYG.replaceShortcodes( event.content, s, true, renderCard );
-                });
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, 'cl-boxout', false, renderBoxout );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
-					event.content = restoreCardShortcodes( event.content );
+					event.content = restoreBoxoutShortcodes( event.content );
 				}
 			});
 
@@ -163,7 +138,7 @@
 				var isCard = false, card, sc, attributes;
 				card = e.target;
 				while ( isCard === false && card.parentNode ) {
-					if ( card.className.indexOf('cl-card') > -1 || card.className.indexOf('cl-dcard') > -1 ) {
+					if ( card.className.indexOf('cl-boxout') > -1 ) {
 						isCard = true;
 					} else {
 						if(card.parentNode) {
@@ -175,7 +150,7 @@
 				if ( isCard ) {
 					sc = window.decodeURIComponent( card.getAttribute('data-shortcode') );
 					attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-					ed.execCommand('CLCard', attributes);
+					ed.execCommand('CLBoxout', attributes);
 				}
 			});
 
@@ -216,7 +191,7 @@
 	});
 
 	// Register plugin
-	tinymce.PluginManager.add( 'uri_wysiwyg_card', tinymce.plugins.uri_wysiwyg_card );
+	tinymce.PluginManager.add( 'uri_wysiwyg_boxout', tinymce.plugins.uri_wysiwyg_boxout );
 
 
 })();
