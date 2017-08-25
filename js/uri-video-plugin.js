@@ -78,7 +78,7 @@
 				}
 
 				ed.windowManager.open({
-					title: 'Insert / Update Hero',
+					title: 'Insert / Update Video',
 					library: {type: 'image'},
 					body: [
                         {type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
@@ -86,7 +86,7 @@
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
                         {type: 'textbox', name: 'alt', id: 'alt', label: 'Image Alt Text', value: args.alt},
                         {type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
-                        {type: 'textbox', name: 'aspect', label: 'Aspect Ratio', value: args.aspect}
+                        {type: 'textbox', name: 'aspect', label: 'Aspect Ratio', 'placeholder': '16:9', value: args.aspect}
 
 					],
 					onsubmit: function(e) {

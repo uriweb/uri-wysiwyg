@@ -83,7 +83,7 @@
 					title: 'Insert / Update Button',
 					body: [
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
-						{type: 'textbox', name: 'text', label: 'Text', value: args.text},
+						{type: 'textbox', name: 'text', label: 'Text', 'placeholder':'Explore', value: args.text},
                         {type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip},
                         {type: 'checkbox', name: 'prominent', label: 'Prominent', checked: args.prominent },
 					],
