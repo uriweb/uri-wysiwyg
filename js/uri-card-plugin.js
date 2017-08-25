@@ -68,7 +68,7 @@
 				title : 'Card',
 				text : '',
 				cmd : wName,
-				image : url + '/i/card@2x.png'
+				image : url + '/i/card.png'
 			});
 		
 			// add a js callback for the button

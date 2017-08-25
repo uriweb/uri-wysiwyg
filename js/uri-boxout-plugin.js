@@ -64,7 +64,7 @@
 				title : 'Boxout',
 				text : '',
 				cmd : wName,
-				image : url + '/i/boxout@2x.png'
+				image : url + '/i/boxout.png'
 			});
 		
 			// add a js callback for the button

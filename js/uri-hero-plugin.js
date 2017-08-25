@@ -81,7 +81,7 @@
 				title : 'Hero',
 				text : '',
 				cmd : wName,
-				image : url + '/i/hero@2x.png'
+				image : url + '/i/hero.png'
 			});
 		
 			// add a js callback for the button

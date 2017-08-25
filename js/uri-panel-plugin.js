@@ -69,7 +69,7 @@
 				title : 'Panel',
 				text : '',
 				cmd : wName,
-				image : url + '/i/panel@2x.png'
+				image : url + '/i/panel.png'
 			});
 		
 			// add a js callback for the button

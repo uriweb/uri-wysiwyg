@@ -62,7 +62,7 @@
 				title : 'Notice',
 				text : '',
 				cmd : wName,
-				image : url + '/i/notice@2x.png'
+				image : url + '/i/notice.png'
 			});
 		
 			// add a js callback for the button

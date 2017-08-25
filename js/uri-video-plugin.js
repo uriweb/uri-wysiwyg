@@ -52,7 +52,7 @@
 				title : 'Video',
 				text : '',
 				cmd : wName,
-				image : url + '/i/video@2x.png'
+				image : url + '/i/video.png'
 			});
 		
 			// add a js callback for the button

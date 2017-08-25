@@ -59,7 +59,7 @@
 				title : 'Button',
 				text : '',
 				cmd : wName,
-				image : url + '/i/button@2x.png'
+				image : url + '/i/button.png'
 			});
 		
 			// add a js callback for the button
