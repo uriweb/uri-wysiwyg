@@ -34,13 +34,15 @@
         }
             
         if(parsed.img) {
-            out += '<img src="' + parsed.img + '"';
+            out += '<div style="background-image:url(' + parsed.img + ')"';
             if(parsed.vid) {
                 out += ' id="' + parsed.vid + '" class="poster"';
             } else if (parsed.dynamic == "true") {
                 out += ' class="dynamic"';
-            } 
-            out += ' alt="' + parsed.alt + '">';
+            } else {
+                out += ' class="still"';
+            }
+            out += '></div>';
         }
 		out += '</div>';
 		
@@ -96,7 +98,6 @@
                     'img', 
                     'vid', 
                     'dynamic', 
-                    'zoom', 
                     'headline', 
                     'subhead', 
                     'link',
