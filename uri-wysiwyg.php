@@ -38,6 +38,8 @@ function uri_wysiwyg_register_tinymce_plugin( $plugin_array ) {
     // load the custom video plugin
 	$plugin_array['uri_wysiwyg_video'] = plugins_url( '/js/uri-video-plugin.js', __FILE__ );
 
+	$plugin_array['uri_wysiwyg_tiles'] = plugins_url( '/js/uri-tiles-plugin.js', __FILE__ );
+
 	return $plugin_array;
 }
 // Load the TinyMCE plugin
@@ -48,7 +50,7 @@ add_filter( 'mce_external_plugins', 'uri_wysiwyg_register_tinymce_plugin' );
  *
  */
 function uri_wysiwyg_register_buttons( $buttons ) {
-	array_push( $buttons, 'CLBoxout', 'CLButton', 'CLCard', 'CLHero', 'CLNotice', 'CLPanel', 'CLVideo' );
+	array_push( $buttons, 'CLBoxout', 'CLButton', 'CLCard', 'CLHero', 'CLNotice', 'CLPanel', 'CLVideo', 'CLTiles' );
 	return $buttons;
 }
 // add new buttons
@@ -67,3 +69,16 @@ function uri_wysiwyg_add_scripts( $hook ) {
 
 }
 add_action( 'admin_enqueue_scripts', 'uri_wysiwyg_add_scripts' );
+
+
+/**
+ * Apply styles to the visual editor
+ */ 
+function uri_wysiwyg_editor_style( $url ) {
+	if ( !empty($url) ) {
+		$url .= ',';
+	}
+	$url .= plugins_url( '/css/uri-wysiwyg-editor.css', __FILE__ );
+ 	return $url;
+}
+add_filter('mce_css', 'uri_wysiwyg_editor_style');
