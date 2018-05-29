@@ -10,6 +10,10 @@
 
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
+		
+		console.log(safeData);
+		//safeData = URIWYSIWYG.htmlUnescape( shortcode );
+		
         
 		out = '<div class="' + parsed.style + ' mceNonEditable" data-shortcode="' + safeData + '">';
         if(parsed.img) {
@@ -33,13 +37,12 @@
 	function generateCardShortcode(params) {
 
 		var attributes = [];
-		
-        if(!params.button) {
-            params.button = 'Explore';
-        }
+		if(!params.button) {
+			params.button = 'Explore';
+		}
         
 		for(i in params) {
-            attributes.push(i + '="' + params[i] + '"');
+			attributes.push(i + '="' + params[i] + '"');
 		}
 		
 		return '[' + params.style + ' ' + attributes.join(' ') + ']';

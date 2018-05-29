@@ -2,35 +2,35 @@
 
 (function() {
 
-    var cName = 'cl-panel',
-        wName = 'CLPanel';
+	var cName = 'cl-panel',
+			wName = 'CLPanel';
     
 	function renderPanel( shortcode ) {
 		var parsed, safeData, classes, out;
         
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-        classes = 'mceNonEditable ' + cName;
-        
-        out = '<div data-shortcode="' + safeData + '"';
-        if(parsed.reverse == 'true') {
-            classes += ' reverse';
-        }
-        out += ' class="' + classes + '">';
-        out += '<figure>'
-        if(parsed.img) {
-            out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
-        }
-        out += '</figure>';
-        out += '<article>';
-        if(parsed.title) {
-            out += '<h1>' + parsed.title + '</h1>';
-        }
-        if(parsed.content) {
-            out += '<p>' + parsed.content + '</p>';
-        }
-        out += '</article>';
-        out += '</div>';
+		classes = 'mceNonEditable ' + cName;
+		
+		out = '<div data-shortcode="' + safeData + '"';
+		if(parsed.reverse == 'true') {
+			classes += ' reverse';
+		}
+		out += ' class="' + classes + '">';
+		out += '<figure>'
+		if(parsed.img) {
+			out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
+		}
+		out += '</figure>';
+		out += '<article>';
+		if(parsed.title) {
+			out += '<h1>' + parsed.title + '</h1>';
+		}
+		if(parsed.content) {
+			out += '<p>' + parsed.content + '</p>';
+		}
+		out += '</article>';
+		out += '</div>';
 		
 		return out;
 	}
@@ -40,9 +40,9 @@
 		var attributes = [];
         
 		for(i in params) {
-            if(i != 'content') {
-                attributes.push(i + '="' + params[i] + '"');
-            }
+			if(i != 'content') {
+				attributes.push(i + '="' + params[i] + '"');
+			}
 		}
 		
 		return '[' + cName + ' ' + attributes.join(' ') + ']' + params.content + '[/' + cName + ']';
