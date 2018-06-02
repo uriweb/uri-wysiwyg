@@ -14,8 +14,11 @@ class URIWYSIWYG {
 		return a;
 	}
 
-	// replace " with %25
+	// replace quotes with curly quotes
 	static escapeQuotes(s) {
+		s = s.replace(/"\b/g, "&#8220;");
+		s = s.replace(/"/g, "&#8221;");
+		return s;
 		return s.replace(/"/g, '%25');
 	}
 	
@@ -34,19 +37,40 @@ class URIWYSIWYG {
 		return s.replace(/%25/g, '"');
 	}
 
-	// replace some elements with their HTML entities
-	static htmlEscape(str) {
-		return str
+	/**
+	 * Replace HTML ASCII characters with their HTML entities
+	 * Specifically, replace &, ", ', <, and >
+	 * note: replaces straight quotes (double primes) with curly quotes
+	 *
+	 * @param str s
+	 * @return str
+	 */
+	static htmlEscape(s) {
+		// tend to quotes... using the entities here will cause the visual editor to
+		// display them literally, that's why this doesn't call escapeQuotes()
+		
+		// replace all quotes before a word boundary with an opening curly quote
+		s = s.replace(/"\b/g, "“");
+		// replace the rest of the quotes with a closing curly quote
+		s = s.replace(/"/g, "”");
+		
+		return s
 			.replace(/&/g, '&amp;')
-			.replace(/"/g, '&quot;')
+			.replace(/"/g, '&#34;')
 			.replace(/'/g, '&#39;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;');
 	}
-	// replace those same HTML entities with their proper characters
-	static htmlUnescape(str){
-		return str
-			.replace(/&quot;/g, '"')
+	
+	/**
+	 * Replace HTML entities with their ASCII characters
+	 * @see htmlEscape()
+	 * @param str s
+	 * @return str
+	 */
+	static htmlUnescape(s) {
+		return s
+			.replace(/&#34;/g, '"')
 			.replace(/&#39;/g, "'")
 			.replace(/&lt;/g, '<')
 			.replace(/&gt;/g, '>')
@@ -101,6 +125,12 @@ class URIWYSIWYG {
 	 */
 	static restoreShortcodes( content, sc ) {
 		var html, els, i, t;
+		
+// 		if(sc == 'cl-button') {
+// 			console.log("content");
+// 			console.log(content);
+// 		}
+
 	
 		// convert the content string into a DOM tree so we can parse it easily
 		html = document.createElement('div');
@@ -109,11 +139,22 @@ class URIWYSIWYG {
 	
 		for(i=0; i<els.length; i++) {
 			t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
+// 			if(sc == 'cl-button') {
+// 				console.log("t");
+// 				console.log(t);
+// 			}
 			els[i].parentNode.replaceChild(t, els[i]);
 		}
 
 		//return the DOM tree as a string
-		return this.htmlUnescape( html.innerHTML );
+		var out = this.htmlUnescape( html.innerHTML );
+// 		if(sc == 'cl-button') {
+// 			console.log("html.innerHTML");
+// 			console.log(html.innerHTML);
+// 			console.log("out");
+// 			console.log(out);
+// 		}
+		return out;
 		//return html.innerHTML;
 	}
     

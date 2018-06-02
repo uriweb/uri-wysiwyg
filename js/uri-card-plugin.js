@@ -10,25 +10,21 @@
 
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-		
-		console.log(safeData);
-		//safeData = URIWYSIWYG.htmlUnescape( shortcode );
-		
         
 		out = '<div class="' + parsed.style + ' mceNonEditable" data-shortcode="' + safeData + '">';
-        if(parsed.img) {
-            out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
-        }
-        if(parsed.title) {
-		  out += '<h1>' + parsed.title + '</h1>';
-        }
-        if(parsed.body) {
-		  out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
-        }
-        if(parsed.style == 'cl-card') {
-            if(!parsed.button) { parsed.button = 'Explore'; }
-            out += '<span class="cl-button">' + parsed.button + '</span>';
-        }
+		if(parsed.img) {
+			out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
+		}
+		if(parsed.title) {
+			out += '<h1>' + parsed.title + '</h1>';
+		}
+		if(parsed.body) {
+			out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
+		}
+		if(parsed.style == 'cl-card') {
+			if(!parsed.button) { parsed.button = 'Explore'; }
+			out += '<span class="cl-button">' + parsed.button + '</span>';
+		}
 		out += '</div>';
 		
 		return out;
@@ -42,7 +38,7 @@
 		}
         
 		for(i in params) {
-			attributes.push(i + '="' + params[i] + '"');
+			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 		}
 		
 		return '[' + params.style + ' ' + attributes.join(' ') + ']';
@@ -63,8 +59,8 @@
 		 * @param {string} url Absolute URL to where the plugin is located.
 		 */
 		init : function(ed, url) {
-            
-            var style;
+			
+			var style;
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
 			ed.addButton(wName, {
@@ -91,8 +87,6 @@
 						args[i] = '';
 					}
 				});
-				// prevent nested quotes... escape / unescape instead?
-				args = URIWYSIWYG.unEscapeQuotesDeep(args);
 				
 				var imageEl = '';
 				if(args.img) {
@@ -103,16 +97,16 @@
 					title: 'Insert / Update Card',
 					library: {type: 'image'},
 					body: [
-                        {type: 'listbox', name: 'style', label: 'Card Style', value: args.style, 'values': [
-                            {text: 'Standard', value: 'cl-card'},
-                            {text: 'Detail', value: 'cl-dcard'}
-                            ]
-                        },
+						{type: 'listbox', name: 'style', label: 'Card Style', value: args.style, 'values': [
+							{text: 'Standard', value: 'cl-card'},
+							{text: 'Detail', value: 'cl-dcard'}
+						]
+						},
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
 						{type: 'textbox', multiline: 'true', name: 'body', label: 'Body', value: args.body},
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
-                        {type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
-                        {type: 'container', label: ' ', html: 'Only standard cards display button text.'},
+						{type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
+						{type: 'container', label: ' ', html: 'Only standard cards display button text.'},
 						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
 						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
@@ -120,7 +114,6 @@
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
 						shortcode = generateCardShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
@@ -132,24 +125,24 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-                cNames.forEach(function(s) {
-				    event.content = URIWYSIWYG.replaceShortcodes( event.content, s, true, renderCard );
-                });
+				cNames.forEach(function(s) {
+					event.content = URIWYSIWYG.replaceShortcodes( event.content, s, true, renderCard );
+				});
 			});
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
-                    cNames.forEach(function(s) {
-					   event.content = URIWYSIWYG.restoreShortcodes( event.content, s );
-                    });
+					cNames.forEach(function(s) {
+						event.content = URIWYSIWYG.restoreShortcodes( event.content, s );
+					});
 				}
 			});
 
 			//open popup on placeholder double click
 			ed.on('DblClick',function( event ) {
-                cNames.forEach(function(s) {
-				    URIWYSIWYG.openPopup( event.target, ed, s, wName);
-                });
+				cNames.forEach(function(s) {
+					URIWYSIWYG.openPopup( event.target, ed, s, wName);
+				});
 			});
 
 		},
@@ -166,7 +159,7 @@
 		 * @return {tinymce.ui.Control} New control instance or null if no control was created.
 		 */
 		createControl : function(n, cm) {
-				return null;
+			return null;
 		},
 
 		/**

@@ -2,23 +2,23 @@
 
 (function() {
     
-    var cName = 'cl-button',
-        wName = 'CLButton';
+	var cName = 'cl-button',
+			wName = 'CLButton';
 
 	function renderButton( shortcode ) {
 		var parsed, safeData, classes, out;
 
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-        classes = 'mceNonEditable ' + cName;
-        
-        out = '<a data-shortcode="' + safeData + '"';
-        if(parsed.prominent == 'true') {
-            classes += ' prominent';
-        }
-        out += ' class="' + classes + '">';
-        if(!parsed.text) { parsed.text = 'Explore'; }
-        out += parsed.text + '</a>';
+		classes = 'mceNonEditable ' + cName;
+		
+		out = '<a data-shortcode="' + safeData + '"';
+		if(parsed.prominent == 'true') {
+			classes += ' prominent';
+		}
+		out += ' class="' + classes + '">';
+		if(!parsed.text) { parsed.text = 'Explore'; }
+		out += parsed.text + '</a>';
 		
 		return out;
 	}
@@ -27,20 +27,17 @@
 
 		var attributes = [];
 		
-        if(!params.text) {
-            params.text = 'Explore';
-        }
+		if(!params.text) {
+			params.text = 'Explore';
+		}
         
 		for(i in params) {
-			attributes.push(i + '="' + params[i] + '"');
+			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 		}
-		
+			
 		return '[' + cName + ' ' + attributes.join(' ') + ']';
 
 	}
-
-
-
 
 
 	tinymce.create('tinymce.plugins.uri_wysiwyg_button', {
@@ -77,19 +74,18 @@
 					}
 				});
 				// prevent nested quotes... escape / unescape instead?
-				args = URIWYSIWYG.unEscapeQuotesDeep(args);
+				//args = URIWYSIWYG.unEscapeQuotesDeep(args);
 
 				ed.windowManager.open({
 					title: 'Insert / Update Button',
 					body: [
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
 						{type: 'textbox', name: 'text', label: 'Text', 'placeholder':'Explore', value: args.text},
-                        {type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip},
-                        {type: 'checkbox', name: 'prominent', label: 'Prominent', checked: args.prominent },
+						{type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip},
+						{type: 'checkbox', name: 'prominent', label: 'Prominent', checked: args.prominent },
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
 						shortcode = generateButtonShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
@@ -106,6 +102,9 @@
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
+					// here's the kicker: nested quotes will all be converted to quotes
+					// obviously, this breaks everything
+					console.log ( URIWYSIWYG.restoreShortcodes( event.content, cName ) );
 					event.content = URIWYSIWYG.restoreShortcodes( event.content, cName );
 				}
 			});
