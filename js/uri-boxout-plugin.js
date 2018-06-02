@@ -2,44 +2,43 @@
 
 (function() {
 
-    var cName = 'cl-boxout',
-        wName = 'CLBoxout';
+	var cName = 'cl-boxout',
+			wName = 'CLBoxout';
     
 	function renderBoxout( shortcode ) {
 		var parsed, safeData, classes, out;
         
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-        classes = 'mceNonEditable ' + cName;
-        
-        out = '<div data-shortcode="' + safeData + '"';
-        if(parsed.float != 'auto') {
-            classes += ' ' + parsed.float;
-        }
-        out += ' class="' + classes + '">';
-        if(parsed.title) {
-            out += '<h1>' + parsed.title + '</h1>';
-        }
-        if(parsed.content) {
-            out += '<p>' + parsed.content + '</p>';
-        }
-        out += '</div>';
+		classes = 'mceNonEditable ' + cName;
+		
+		out = '<div data-shortcode="' + safeData + '"';
+		if(parsed.float != 'auto') {
+			classes += ' ' + parsed.float;
+		}
+		out += ' class="' + classes + '">';
+		if(parsed.title) {
+			out += '<h1>' + parsed.title + '</h1>';
+		}
+		if(parsed.content) {
+			out += '<p>' + parsed.content + '</p>';
+		}
+		out += '</div>';
 		
 		return out;
 	}
+
 	
 	function generateBoxoutShortcode(params) {
 
 		var attributes = [];
         
 		for(i in params) {
-            if(i != 'content') {
-                attributes.push(i + '="' + params[i] + '"');
-            }
+			if(i != 'content') {
+				attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
+			}
 		}
-        
-        console.log('generate content', params.content);
-		
+        		
 		return '[' + cName + ' ' + attributes.join(' ') + ']' + params.content + '[/' + cName + ']';
 
 	}
@@ -81,24 +80,21 @@
 						args[i] = '';
 					}
 				});
-				// prevent nested quotes... escape / unescape instead?
-				args = URIWYSIWYG.unEscapeQuotesDeep(args);
 
 				ed.windowManager.open({
 					title: 'Insert / Update Boxout',
 					body: [
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
-                        {type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
-                        {type: 'listbox', name: 'float', label: 'Alignment', value: args.float, 'values': [
-                            {text: 'Auto', value: 'auto'},
-                            {text: 'Left', value: 'left'},
-                            {text: 'Right', value: 'right'}
-                            ]
-                        },
+						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
+						{type: 'listbox', name: 'float', label: 'Alignment', value: args.float, 'values': [
+								{text: 'Auto', value: 'auto'},
+								{text: 'Left', value: 'left'},
+								{text: 'Right', value: 'right'}
+								]
+						},
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
 						shortcode = generateBoxoutShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
@@ -138,7 +134,7 @@
 		 * @return {tinymce.ui.Control} New control instance or null if no control was created.
 		 */
 		createControl : function(n, cm) {
-				return null;
+			return null;
 		},
 
 		/**

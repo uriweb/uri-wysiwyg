@@ -2,8 +2,8 @@
 
 (function() {
 
-    var cName = 'cl-hero',
-        wName = 'CLHero';
+	var cName = 'cl-hero',
+			wName = 'CLHero';
     
 	function renderHero( shortcode ) {
 		var parsed, safeData, out;
@@ -12,38 +12,38 @@
 		safeData = window.encodeURIComponent( shortcode );
                 
 		out = '<div class="' + cName + ' mceNonEditable" data-shortcode="' + safeData + '">';
-        if(parsed.vid) {
-            out += '<div class="overlay">';
-        }
-        if(parsed.headline || parsed.subhead || parsed.link) {
-            out += '<div class="block">';
-            if(parsed.headline) { 
-                out += '<h1>' + parsed.headline + '</h1>';
-            }
-            if(parsed.subhead) {
-                out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.subhead) + '</p>';
-            }
-            if(parsed.link) {
-                if(!parsed.button) { parsed.button = 'Explore'; }
-                out += '<a class="cl-button" href="' + parsed.link + '">' + parsed.button + '</a>';
-            }
-            out += '</div>'; // .block
-        }
-        if(parsed.vid) {
-            out += '</div>'; // .overlay
-        }
-            
-        if(parsed.img) {
-            out += '<div style="background-image:url(' + parsed.img + ')"';
-            if(parsed.vid) {
-                out += ' id="' + parsed.vid + '" class="poster"';
-            } else if (parsed.dynamic == "true") {
-                out += ' class="dynamic"';
-            } else {
-                out += ' class="still"';
-            }
-            out += '></div>';
-        }
+		if(parsed.vid) {
+			out += '<div class="overlay">';
+		}
+		if(parsed.headline || parsed.subhead || parsed.link) {
+			out += '<div class="block">';
+			if(parsed.headline) { 
+					out += '<h1>' + parsed.headline + '</h1>';
+			}
+			if(parsed.subhead) {
+					out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.subhead) + '</p>';
+			}
+			if(parsed.link) {
+					if(!parsed.button) { parsed.button = 'Explore'; }
+					out += '<a class="cl-button" href="' + parsed.link + '">' + parsed.button + '</a>';
+			}
+			out += '</div>'; // .block
+		}
+		if(parsed.vid) {
+			out += '</div>'; // .overlay
+		}
+				
+		if(parsed.img) {
+			out += '<div style="background-image:url(' + parsed.img + ')"';
+			if(parsed.vid) {
+					out += ' id="' + parsed.vid + '" class="poster"';
+			} else if (parsed.dynamic == "true") {
+					out += ' class="dynamic"';
+			} else {
+					out += ' class="still"';
+			}
+			out += '></div>';
+		}
 		out += '</div>';
 		
 		return out;
@@ -53,12 +53,12 @@
 
 		var attributes = [];
 
-        if(!params.button) {
-            params.button = 'Explore';
-        }
+		if(!params.button) {
+				params.button = 'Explore';
+		}
         
 		for(i in params) {
-			attributes.push(i + '="' + params[i] + '"');
+			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 		}
 		
 		return '[' + cName + ' ' + attributes.join(' ') + ']';
@@ -95,23 +95,21 @@
 				}
 				// create an empty property so nothing is null
 				var possibleArgs = [
-                    'img', 
-                    'vid', 
-                    'dynamic', 
-                    'headline', 
-                    'subhead', 
-                    'link',
-                    'button',
-                    'tooltip',
-                    'alt'
-                ];
+						'img', 
+						'vid', 
+						'dynamic', 
+						'headline', 
+						'subhead', 
+						'link',
+						'button',
+						'tooltip',
+						'alt'
+				];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
 					}
 				});
-				// prevent nested quotes... escape / unescape instead?
-				args = URIWYSIWYG.unEscapeQuotesDeep(args);
 				
 				var imageEl = '';
 				if(args.img) {
@@ -122,23 +120,22 @@
 					title: 'Insert / Update Hero',
 					library: {type: 'image'},
 					body: [
-                        {type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
-				        {type: 'button', label: 'Image (required)', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
-                        {type: 'checkbox', name: 'dynamic', label: 'Dynamic Zoom', checked: args.dynamic },
-                        {type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
+						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
+						{type: 'button', label: 'Image (required)', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
+						{type: 'checkbox', name: 'dynamic', label: 'Dynamic Zoom', checked: args.dynamic },
+						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
-                        {type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
-				        {type: 'textbox', name: 'headline', label: 'Headline', value: args.headline},
-                        {type: 'textbox', multiline: 'true', name: 'subhead', label: 'Subheader', value: args.subhead},
+						{type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
+		        {type: 'textbox', name: 'headline', label: 'Headline', value: args.headline},
+            {type: 'textbox', multiline: 'true', name: 'subhead', label: 'Subheader', value: args.subhead},
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
-                        {type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
-                        {type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip}
+						{type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
+						{type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip}
 
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);
-                        shortcode = generateHeroShortcode(e.data);
+						shortcode = generateHeroShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
 				},
@@ -177,7 +174,7 @@
 		 * @return {tinymce.ui.Control} New control instance or null if no control was created.
 		 */
 		createControl : function(n, cm) {
-				return null;
+			return null;
 		},
 
 		/**

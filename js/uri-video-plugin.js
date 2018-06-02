@@ -2,8 +2,8 @@
 
 (function() {
 
-    var cName = 'cl-video',
-        wName = 'CLVideo';
+	var cName = 'cl-video',
+			wName = 'CLVideo';
     
 	function renderVideo( shortcode ) {
 		var parsed, safeData, out;
@@ -12,11 +12,11 @@
 		safeData = window.encodeURIComponent( shortcode );
                 
 		out = '<div class="' + cName + ' mceNonEditable" data-shortcode="' + safeData + '">';
-        out += '<img id="' + parsed.vid + '" src="' + parsed.img + '" alt="' + parsed.alt + '"';
-        if(parsed.aspect){
-            out += ' data-aspect="' + parsed.aspect + '"';
-        }
-        out += '>';
+		out += '<img id="' + parsed.vid + '" src="' + parsed.img + '" alt="' + parsed.alt + '"';
+		if(parsed.aspect){
+				out += ' data-aspect="' + parsed.aspect + '"';
+		}
+		out += '>';
 		out += '</div>';
 		
 		return out;
@@ -27,7 +27,7 @@
 		var attributes = [];
         
 		for(i in params) {
-			attributes.push(i + '="' + params[i] + '"');
+			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 		}
 		
 		return '[' + cName + ' ' + attributes.join(' ') + ']';
@@ -81,18 +81,16 @@
 					title: 'Insert / Update Video',
 					library: {type: 'image'},
 					body: [
-                        {type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
-				        {type: 'button', label: 'Image (required)', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
+						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
+						{type: 'button', label: 'Image (required)', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
-                        {type: 'textbox', name: 'alt', id: 'alt', label: 'Image Alt Text', value: args.alt},
-                        {type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
-                        {type: 'textbox', name: 'aspect', label: 'Aspect Ratio', 'placeholder': '16:9', value: args.aspect}
-
+						{type: 'textbox', name: 'alt', id: 'alt', label: 'Image Alt Text', value: args.alt},
+						{type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
+						{type: 'textbox', name: 'aspect', label: 'Aspect Ratio', 'placeholder': '16:9', value: args.aspect}
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);
-                        shortcode = generateVideoShortcode(e.data);
+						shortcode = generateVideoShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
 				},
@@ -131,7 +129,7 @@
 		 * @return {tinymce.ui.Control} New control instance or null if no control was created.
 		 */
 		createControl : function(n, cm) {
-				return null;
+			return null;
 		},
 
 		/**

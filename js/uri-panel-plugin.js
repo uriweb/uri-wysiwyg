@@ -41,7 +41,7 @@
         
 		for(i in params) {
 			if(i != 'content') {
-				attributes.push(i + '="' + params[i] + '"');
+				attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 			}
 		}
 		
@@ -89,8 +89,6 @@
 						args[i] = '';
 					}
 				});
-				// prevent nested quotes... escape / unescape instead?
-				args = URIWYSIWYG.unEscapeQuotesDeep(args);
 				
 				var imageEl = '';
 				if(args.img) {
@@ -100,17 +98,16 @@
 				ed.windowManager.open({
 					title: 'Insert / Update Panel',
 					body: [
-                        {type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
+						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
 						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
-                        {type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
+						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
-                        {type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
-                        {type: 'checkbox', name: 'reverse', label: 'Reverse', checked: args.reverse }
+						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
+						{type: 'checkbox', name: 'reverse', label: 'Reverse', checked: args.reverse }
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
 						shortcode = generatePanelShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
@@ -150,7 +147,7 @@
 		 * @return {tinymce.ui.Control} New control instance or null if no control was created.
 		 */
 		createControl : function(n, cm) {
-				return null;
+			return null;
 		},
 
 		/**

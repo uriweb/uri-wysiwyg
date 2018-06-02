@@ -2,29 +2,29 @@
 
 (function() {
     
-    var cName = 'cl-notice',
-        wName = 'CLNotice';
+	var cName = 'cl-notice',
+			wName = 'CLNotice';
 
 	function renderNotice( shortcode ) {
 		var parsed, safeData, classes, out;
         
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
-        classes = 'mceNonEditable ' + cName;
-        
-        out = '<div data-shortcode="' + safeData + '"';
-        if(parsed.urgent == 'true') {
-            classes += ' urgent';
-        }
-        out += ' class="' + classes + '">';
-        if(parsed.title) {
-            out += '<h1>' + parsed.title + '</h1>';
-        }
-        if(parsed.content) {
-            out += '<p>' + parsed.content + '</p>';
-        }
-        out += '</div>';
+		classes = 'mceNonEditable ' + cName;
 		
+		out = '<div data-shortcode="' + safeData + '"';
+		if(parsed.urgent == 'true') {
+				classes += ' urgent';
+		}
+		out += ' class="' + classes + '">';
+		if(parsed.title) {
+				out += '<h1>' + parsed.title + '</h1>';
+		}
+		if(parsed.content) {
+				out += '<p>' + parsed.content + '</p>';
+		}
+		out += '</div>';
+
 		return out;
 	}
 	
@@ -33,9 +33,9 @@
 		var attributes = [];
         
 		for(i in params) {
-            if(i != 'content') {
-                attributes.push(i + '="' + params[i] + '"');
-            }
+			if(i != 'content') {
+				attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
+			}
 		}
         		
 		return '[' + cName + ' ' + attributes.join(' ') + ']' + params.content + '[/' + cName + ']';
@@ -86,12 +86,11 @@
 					title: 'Insert / Update Notice',
 					body: [
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
-                        {type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
-                        {type: 'checkbox', name: 'urgent', label: 'Urgent', checked: args.urgent }
+						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
+						{type: 'checkbox', name: 'urgent', label: 'Urgent', checked: args.urgent }
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						e.data = URIWYSIWYG.escapeQuotesDeep(e.data);						
 						shortcode = generateNoticeShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
@@ -131,7 +130,7 @@
 		 * @return {tinymce.ui.Control} New control instance or null if no control was created.
 		 */
 		createControl : function(n, cm) {
-				return null;
+			return null;
 		},
 
 		/**
