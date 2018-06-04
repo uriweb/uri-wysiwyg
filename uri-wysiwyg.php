@@ -136,3 +136,44 @@ function uri_wysiwyg_insert_formats( $init_array ) {
   
 } 
 add_filter( 'tiny_mce_before_init', 'uri_wysiwyg_insert_formats' );  
+
+
+
+
+/**
+ * Set up an AJAX endpoint to parse shortcodes and get the HTML from the server
+ */
+function uri_wysiwyg_get_html() {
+	// only allow contributors to use this endpoint
+	if ( ! current_user_can( 'edit_posts' ) ) {
+		header('HTTP/1.0 403 Forbidden');
+		return __( 'This resource is for authors only, sorry.', 'uri' );
+	}
+
+	if ( empty( $_GET['sc'] ) ) {
+		return;
+	}
+	
+	$out = '';
+	$out = do_shortcode( $_GET['sc'] );
+	
+	// parse errors out of the returned HTML, otherwise, they'll be saved in the post.
+	
+	$dom = new DOMDocument();
+	$dom->loadHTML( $out, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+
+	$divs = $dom->getElementsByTagName( 'div' );
+	foreach ( $divs as $element ) {
+		$class = $element->getAttribute( 'class' );
+		if ( strpos( $class, 'cl-errors' ) !== FALSE ) {
+			$element->parentNode->removeChild( $element );
+		}
+	}
+	
+	$out = $dom->saveHTML();
+
+	// return the output
+	wp_send_json( $out );
+  wp_die();
+}
+add_action('wp_ajax_uri_wysiwyg',  'uri_wysiwyg_get_html');

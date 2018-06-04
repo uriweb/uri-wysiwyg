@@ -1,12 +1,33 @@
 // https://code.tutsplus.com/tutorials/guide-to-creating-your-own-wordpress-editor-buttons--wp-30182
 
 (function() {
-    
+   
 	var cName = 'cl-button',
 			wName = 'CLButton';
 
 	function renderButton( shortcode ) {
 		var parsed, safeData, classes, out;
+
+// 		var settings = {};
+// 		var url = 'https://atelier.local/wordpress/wp-admin/admin-ajax.php';
+// 
+// 		// https://api.jquery.com/jQuery.ajax/
+// 		jQuery.ajax( url, {
+// 			data: {
+// 				action: 'uri_wysiwyg',
+// 				sc: ( shortcode )
+// 			},
+// 			dataType: 'json',
+// 			error: function( jqXHR, textStatus, errorThrown ) {
+// 				console.log('failed to retrieve shortcode HTML.');
+// 				console.log(textStatus);
+// 				console.log(errorThrown);
+// 			},
+// 			success: function( data, textStatus, jqXHR ) {
+// 				console.log('Success! Got the shortcode HTML.');
+// 				console.log( window.decodeURIComponent( data ) );
+// 			},
+// 		});
 
 		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
 		safeData = window.encodeURIComponent( shortcode );
@@ -104,7 +125,6 @@
 				if ( event.get ) {
 					// here's the kicker: nested quotes will all be converted to quotes
 					// obviously, this breaks everything
-					console.log ( URIWYSIWYG.restoreShortcodes( event.content, cName ) );
 					event.content = URIWYSIWYG.restoreShortcodes( event.content, cName );
 				}
 			});
