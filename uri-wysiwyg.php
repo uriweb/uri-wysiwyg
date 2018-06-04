@@ -154,8 +154,11 @@ function uri_wysiwyg_get_html() {
 		return;
 	}
 	
-	$out = '';
-	$out = do_shortcode( $_GET['sc'] );
+	$sc = ( get_magic_quotes_gpc() ) ? $_GET['sc'] : stripslashes( $_GET['sc'] );
+	$sc = mb_convert_encoding($sc, 'HTML-ENTITIES', 'UTF-8');
+	
+	$out = do_shortcode( $sc );
+	
 	
 	// parse errors out of the returned HTML, otherwise, they'll be saved in the post.
 	
@@ -171,7 +174,7 @@ function uri_wysiwyg_get_html() {
 	}
 	
 	$out = $dom->saveHTML();
-
+	
 	// return the output
 	wp_send_json( $out );
   wp_die();

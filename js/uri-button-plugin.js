@@ -4,44 +4,10 @@
    
 	var cName = 'cl-button',
 			wName = 'CLButton';
+	
 
-	function renderButton( shortcode ) {
-		var parsed, safeData, classes, out;
+	function renderButton( shortcode, ed ) {
 
-// 		var settings = {};
-// 		var url = 'https://atelier.local/wordpress/wp-admin/admin-ajax.php';
-// 
-// 		// https://api.jquery.com/jQuery.ajax/
-// 		jQuery.ajax( url, {
-// 			data: {
-// 				action: 'uri_wysiwyg',
-// 				sc: ( shortcode )
-// 			},
-// 			dataType: 'json',
-// 			error: function( jqXHR, textStatus, errorThrown ) {
-// 				console.log('failed to retrieve shortcode HTML.');
-// 				console.log(textStatus);
-// 				console.log(errorThrown);
-// 			},
-// 			success: function( data, textStatus, jqXHR ) {
-// 				console.log('Success! Got the shortcode HTML.');
-// 				console.log( window.decodeURIComponent( data ) );
-// 			},
-// 		});
-
-		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
-		safeData = window.encodeURIComponent( shortcode );
-		classes = 'mceNonEditable ' + cName;
-		
-		out = '<a data-shortcode="' + safeData + '"';
-		if(parsed.prominent == 'true') {
-			classes += ' prominent';
-		}
-		out += ' class="' + classes + '">';
-		if(!parsed.text) { parsed.text = 'Explore'; }
-		out += parsed.text + '</a>';
-		
-		return out;
 	}
 	
 	function generateButtonShortcode(params) {
@@ -118,7 +84,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderButton );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderButton, this );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

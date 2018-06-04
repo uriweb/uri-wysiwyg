@@ -78,6 +78,39 @@ class URIWYSIWYG {
 	}
 	
 
+	static getHTML( ed, shortcode, id, classes ) {
+		// https://api.jquery.com/jQuery.ajax/
+		
+		jQuery.ajax( wp.ajax.settings.url, {
+			data: {
+				action: 'uri_wysiwyg',
+				sc: ( shortcode )
+			},
+			dataType: 'json',
+			error: function( jqXHR, textStatus, errorThrown ) {
+				console.log('failed to retrieve shortcode HTML.');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+			success: function( data, textStatus, jqXHR ) {
+
+				if(ed.$) {
+					jQuery(data)[0].setAttribute('data-shortcode', window.encodeURIComponent( shortcode ) );		
+					ed.$('#'+id).after(data);
+					var el = ed.$('#'+id).next();
+					el.addClass( classes );
+					el[0].setAttribute('data-shortcode', window.encodeURIComponent( shortcode ) );
+					el[0].setAttribute('contenteditable', 'false' );
+					ed.$('#'+id).remove();
+				}
+				
+			},
+			done: function( data, textStatus, jqXHR ) {
+				console.log('Done.');
+			}
+		});
+	}
+
 	
 	/* Replace shortcode with HTML
 	 * @param content string The editor content
@@ -85,12 +118,25 @@ class URIWYSIWYG {
 	 * @param selfclosing bool Whether the shortcode is self-closing
 	 * @param callback function The callback function
 	 */
-	static replaceShortcodes( content, shortcodeName, selfclosing, callback ) {
+	static replaceShortcodes( content, shortcodeName, selfclosing, callback, ed ) {
 
 		var re = selfclosing ? new RegExp('\\[' + shortcodeName + '([^\\]]*)\\]', 'g') : new RegExp('\\[' + shortcodeName + '.+?\\[/' + shortcodeName + '\\]', 'g');
         
 		return content.replace( re, function( match ) {
-			return callback( match );
+
+			var safeData, classes, out;
+	
+			safeData = window.encodeURIComponent( match );
+			classes = 'mceNonEditable ' + shortcodeName;
+
+			// generate a random ID
+			var id = '_' + Math.random().toString(36).substr(2, 9);
+			URIWYSIWYG.getHTML( ed, match, id, classes );
+		
+			out = '<div class="loading" data-shortcode="' + safeData + '" id="' + id + '">Loading...</div>';
+			callback( match, out, ed );
+			return out;
+
 		});
 	}
 
