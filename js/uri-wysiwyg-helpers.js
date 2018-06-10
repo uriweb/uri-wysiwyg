@@ -79,12 +79,12 @@ class URIWYSIWYG {
 	
 
 	static getHTML( ed, shortcode, id, classes ) {
-		// https://api.jquery.com/jQuery.ajax/
-		
+
+		// https://api.jquery.com/jQuery.ajax/		
 		jQuery.ajax( wp.ajax.settings.url, {
 			data: {
 				action: 'uri_wysiwyg',
-				sc: ( shortcode )
+				sc: shortcode
 			},
 			dataType: 'json',
 			error: function( jqXHR, textStatus, errorThrown ) {
@@ -95,13 +95,30 @@ class URIWYSIWYG {
 			success: function( data, textStatus, jqXHR ) {
 
 				if(ed.$) {
-					jQuery(data)[0].setAttribute('data-shortcode', window.encodeURIComponent( shortcode ) );		
-					ed.$('#'+id).after(data);
-					var el = ed.$('#'+id).next();
+			
+					var placeHolder = ed.$('#' + id);
+					
+					var d = document.createElement('div');
+					
+					if( data.match( 'class="cl-card' ) ) {
+						// replace the <a class="cl-card"> element with a <div>
+						// because TinyMCE doesn't like block-level elements inside of inline elements
+						data = data.replace('<a ', '<div ');
+						data = data.replace('</a>', '</div>');
+					}
+					
+					jQuery(d).addClass( classes ).append( data );
+
+					placeHolder.after(d.innerHTML);
+					var el = placeHolder.next();
+					
+					el.attr({
+						'data-shortcode': window.encodeURIComponent( shortcode ),
+						'contenteditable': 'false'
+					});
 					el.addClass( classes );
-					el[0].setAttribute('data-shortcode', window.encodeURIComponent( shortcode ) );
-					el[0].setAttribute('contenteditable', 'false' );
-					ed.$('#'+id).remove();
+
+					placeHolder.remove();
 				}
 				
 			},
@@ -110,7 +127,7 @@ class URIWYSIWYG {
 			}
 		});
 	}
-
+	
 	
 	/* Replace shortcode with HTML
 	 * @param content string The editor content
@@ -121,6 +138,7 @@ class URIWYSIWYG {
 	static replaceShortcodes( content, shortcodeName, selfclosing, callback, ed ) {
 
 		var re = selfclosing ? new RegExp('\\[' + shortcodeName + '([^\\]]*)\\]', 'g') : new RegExp('\\[' + shortcodeName + '.+?\\[/' + shortcodeName + '\\]', 'g');
+
         
 		return content.replace( re, function( match ) {
 
@@ -165,45 +183,44 @@ class URIWYSIWYG {
 		return attributes;
 	}
     
-	/* Replace HTML with shortcode
+	/**
+	 * Replace HTML with shortcode
 	 * @param content string The editor content
 	 * @param sc string The shortcode name
 	 */
 	static restoreShortcodes( content, sc ) {
-		var html, els, i, t;
-		
-// 		if(sc == 'cl-button') {
-// 			console.log("content");
-// 			console.log(content);
-// 		}
-
+		var html, componentElements, i, t, wrapper;
 	
 		// convert the content string into a DOM tree so we can parse it easily
 		html = document.createElement('div');
 		html.innerHTML = content;
-		els = html.querySelectorAll('.' + sc);
+		componentElements = html.querySelectorAll('.' + sc);
+
+		// componentElements contains an array of the shortcodes
 	
-		for(i=0; i<els.length; i++) {
-			t = document.createTextNode( window.decodeURIComponent(els[i].getAttribute('data-shortcode')) );
-// 			if(sc == 'cl-button') {
-// 				console.log("t");
-// 				console.log(t);
-// 			}
-			els[i].parentNode.replaceChild(t, els[i]);
+		for(i=0; i<componentElements.length; i++) {
+			t = document.createTextNode( window.decodeURIComponent( componentElements[i].getAttribute( 'data-shortcode' ) ) );
+
+			// I'm not crazy about the blend of js and jQuery here... clean up
+
+			// see if the component has a wrapper element
+			wrapper = jQuery(componentElements[i]).closest( '.' + sc + '-wrapper' );
+
+			// If the component has a wrapper element, replace the wrapper
+			// otherwise, replace the component
+			if ( wrapper.length > 0 ) {
+				wrapper[0].replaceWith(t);
+			} else {
+				componentElements[i].parentNode.replaceChild(t, componentElements[i]);
+			}
 		}
 
 		//return the DOM tree as a string
 		var out = this.htmlUnescape( html.innerHTML );
-// 		if(sc == 'cl-button') {
-// 			console.log("html.innerHTML");
-// 			console.log(html.innerHTML);
-// 			console.log("out");
-// 			console.log(out);
-// 		}
 		return out;
 		//return html.innerHTML;
 	}
-    
+	    
     
 	// invokes the wp media picker from a tinymce modal
 	static mediaPicker(e) {
@@ -246,9 +263,11 @@ class URIWYSIWYG {
 	}
     
 	static openPopup(target, ed, cName, wName) {
+		
 		var isTarget = false, sc, attributes;
+		
 		while ( isTarget === false && target.parentNode ) {
-			if ( target.className.indexOf(cName) > -1 ) {
+			if ( jQuery(target).hasClass(cName) ) {
 				isTarget = true;
 			} else {
 				if(target.parentNode) {
@@ -258,6 +277,13 @@ class URIWYSIWYG {
 		}
 
 		if ( isTarget ) {
+		
+
+			if( ! target.getAttribute('data-shortcode') ) {
+				// see if the component has a wrapper element
+				target = jQuery(target).closest( '.' + cName + '-wrapper' )[0];
+			}
+
 			sc = window.decodeURIComponent( target.getAttribute('data-shortcode') );
 			attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
 			ed.execCommand(wName, attributes);

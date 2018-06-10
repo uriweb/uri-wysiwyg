@@ -6,26 +6,6 @@
 			wName = 'CLBoxout';
     
 	function renderBoxout( shortcode ) {
-		var parsed, safeData, classes, out;
-        
-		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
-		safeData = window.encodeURIComponent( shortcode );
-		classes = 'mceNonEditable ' + cName;
-		
-		out = '<div data-shortcode="' + safeData + '"';
-		if(parsed.float != 'auto') {
-			classes += ' ' + parsed.float;
-		}
-		out += ' class="' + classes + '">';
-		if(parsed.title) {
-			out += '<h1>' + parsed.title + '</h1>';
-		}
-		if(parsed.content) {
-			out += '<p>' + parsed.content + '</p>';
-		}
-		out += '</div>';
-		
-		return out;
 	}
 
 	
@@ -87,10 +67,10 @@
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
 						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
 						{type: 'listbox', name: 'float', label: 'Alignment', value: args.float, 'values': [
-								{text: 'Auto', value: 'auto'},
-								{text: 'Left', value: 'left'},
-								{text: 'Right', value: 'right'}
-								]
+						{text: 'Auto', value: ''},
+						{text: 'Left', value: 'left'},
+						{text: 'Right', value: 'right'}
+					]
 						},
 					],
 					onsubmit: function(e) {
@@ -106,7 +86,7 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderBoxout );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderBoxout, this );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

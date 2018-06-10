@@ -2,32 +2,10 @@
 
 (function() {
     
-    var cNames = ['cl-card', 'cl-dcard'],
-        wName = 'CLCard';
+	var cNames = ['cl-card'],
+			wName = 'CLCard';
 
 	function renderCard( shortcode ) {
-		var parsed, safeData, out;
-
-		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
-		safeData = window.encodeURIComponent( shortcode );
-        
-		out = '<div class="' + parsed.style + ' mceNonEditable" data-shortcode="' + safeData + '">';
-		if(parsed.img) {
-			out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
-		}
-		if(parsed.title) {
-			out += '<h1>' + parsed.title + '</h1>';
-		}
-		if(parsed.body) {
-			out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.body) + '</p>';
-		}
-		if(parsed.style == 'cl-card') {
-			if(!parsed.button) { parsed.button = 'Explore'; }
-			out += '<span class="cl-button">' + parsed.button + '</span>';
-		}
-		out += '</div>';
-		
-		return out;
 	}
 	
 	function generateCardShortcode(params) {
@@ -36,8 +14,11 @@
 		if(!params.button) {
 			params.button = 'Explore';
 		}
-        
+		      
 		for(i in params) {
+			if(i == 'style') {
+				continue;
+			}
 			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 		}
 		
@@ -103,7 +84,7 @@
 						]
 						},
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
-						{type: 'textbox', multiline: 'true', name: 'body', label: 'Body', value: args.body},
+						{type: 'textbox', name: 'body', multiline: 'true', label: 'Body', value: args.body},
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
 						{type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
 						{type: 'container', label: ' ', html: 'Only standard cards display button text.'},
@@ -125,24 +106,28 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				cNames.forEach(function(s) {
-					event.content = URIWYSIWYG.replaceShortcodes( event.content, s, true, renderCard );
-				});
+				for (var i=0; i<cNames.length; i++) {
+// 					console.log('cname is ');
+// 					console.log(cNames[i]);
+// 					console.log('card event is');
+// 					console.log(event);
+					event.content = URIWYSIWYG.replaceShortcodes( event.content, cNames[i], true, renderCard, ed );
+				}
 			});
 
 			ed.on( 'PostProcess', function( event ) {
 				if ( event.get ) {
-					cNames.forEach(function(s) {
-						event.content = URIWYSIWYG.restoreShortcodes( event.content, s );
-					});
+					for (var i=0; i<cNames.length; i++) {
+						event.content = URIWYSIWYG.restoreShortcodes( event.content, cNames[i] );
+					}
 				}
 			});
 
 			//open popup on placeholder double click
 			ed.on('DblClick',function( event ) {
-				cNames.forEach(function(s) {
-					URIWYSIWYG.openPopup( event.target, ed, s, wName);
-				});
+				for (var i=0; i<cNames.length; i++) {
+					URIWYSIWYG.openPopup( event.target, ed, cNames[i], wName);
+				}
 			});
 
 		},
