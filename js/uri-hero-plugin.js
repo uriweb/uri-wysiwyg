@@ -6,47 +6,7 @@
 			wName = 'CLHero';
     
 	function renderHero( shortcode ) {
-		var parsed, safeData, out;
 
-		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
-		safeData = window.encodeURIComponent( shortcode );
-                
-		out = '<div class="' + cName + ' mceNonEditable" data-shortcode="' + safeData + '">';
-		if(parsed.vid) {
-			out += '<div class="overlay">';
-		}
-		if(parsed.headline || parsed.subhead || parsed.link) {
-			out += '<div class="block">';
-			if(parsed.headline) { 
-					out += '<h1>' + parsed.headline + '</h1>';
-			}
-			if(parsed.subhead) {
-					out += '<p>' + URIWYSIWYG.unEscapeQuotes(parsed.subhead) + '</p>';
-			}
-			if(parsed.link) {
-					if(!parsed.button) { parsed.button = 'Explore'; }
-					out += '<a class="cl-button" href="' + parsed.link + '">' + parsed.button + '</a>';
-			}
-			out += '</div>'; // .block
-		}
-		if(parsed.vid) {
-			out += '</div>'; // .overlay
-		}
-				
-		if(parsed.img) {
-			out += '<div style="background-image:url(' + parsed.img + ')"';
-			if(parsed.vid) {
-					out += ' id="' + parsed.vid + '" class="poster"';
-			} else if (parsed.dynamic == "true") {
-					out += ' class="dynamic"';
-			} else {
-					out += ' class="still"';
-			}
-			out += '></div>';
-		}
-		out += '</div>';
-		
-		return out;
 	}
 	
 	function generateHeroShortcode(params) {
@@ -146,7 +106,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderHero );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderHero, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

@@ -107,10 +107,6 @@
 
 			ed.on( 'BeforeSetContent', function( event ) {
 				for (var i=0; i<cNames.length; i++) {
-// 					console.log('cname is ');
-// 					console.log(cNames[i]);
-// 					console.log('card event is');
-// 					console.log(event);
 					event.content = URIWYSIWYG.replaceShortcodes( event.content, cNames[i], true, renderCard, ed );
 				}
 			});
