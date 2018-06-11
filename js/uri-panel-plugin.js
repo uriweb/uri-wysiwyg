@@ -58,7 +58,7 @@
 		
 			// add a js callback for the button
 			ed.addCommand(wName, function(args) {
-			
+
 				// create an empty object if args is empty
 				if(!args) {
 					args = {}

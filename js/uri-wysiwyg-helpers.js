@@ -226,8 +226,8 @@ class URIWYSIWYG {
 	static mediaPicker(e) {
 		e.preventDefault();
 		var picker;
-				
-		picker = wp.media({
+		
+		picker = wp.media.frames.picker = wp.media({
 			title: 'Select an image',
 			button: {text: 'Add an image'},
 			library: { type: [ 'image' ] },
