@@ -112,6 +112,7 @@
 
 			//open popup on placeholder double click
 			ed.on('DblClick',function( event ) {
+				console.log( event.target );
 				URIWYSIWYG.openPopup( event.target, ed, cName, wName);
 			});
 

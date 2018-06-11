@@ -14,11 +14,18 @@
 
 		var attributes = [];
 		
+		if(params.prominent == true) {
+			params.style = 'prominent';
+		}
+
 		if(!params.text) {
 			params.text = 'Explore';
 		}
         
 		for(i in params) {
+			if(i == 'prominent') {
+				continue;
+			}
 			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 		}
 			
@@ -69,7 +76,7 @@
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
 						{type: 'textbox', name: 'text', label: 'Text', 'placeholder':'Explore', value: args.text},
 						{type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip},
-						{type: 'checkbox', name: 'prominent', label: 'Prominent', checked: args.prominent },
+						{type: 'checkbox', name: 'prominent', label: 'Prominent', checked: (args.style == 'prominent') },
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted

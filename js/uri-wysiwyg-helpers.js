@@ -278,10 +278,9 @@ class URIWYSIWYG {
 
 		if ( isTarget ) {
 		
-
 			if( ! target.getAttribute('data-shortcode') ) {
 				// see if the component has a wrapper element
-				target = jQuery(target).closest( '.' + cName + '-wrapper' )[0];
+				target = jQuery(target).closest( '.' + cName + '-wrapper' )[0];	
 			}
 
 			sc = window.decodeURIComponent( target.getAttribute('data-shortcode') );
