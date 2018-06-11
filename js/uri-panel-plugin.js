@@ -11,7 +11,7 @@
 	function generatePanelShortcode(params) {
 
 		var attributes = [];
-        
+    
 		if( ! params.img ) {
 			alert('Image is required for panels');
 			return false;
@@ -26,7 +26,7 @@
 				attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 			}
 		}
-		
+
 		return '[' + cName + ' ' + attributes.join(' ') + ']' + params.content + '[/' + cName + ']';
 
 	}

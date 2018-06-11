@@ -94,11 +94,6 @@ class URIWYSIWYG {
 			},
 			success: function( data, textStatus, jqXHR ) {
 
-				console.log(data);
-					
-
-
-
 				if(ed.$) {
 			
 					var placeHolder = ed.$('#' + id);
@@ -243,16 +238,16 @@ class URIWYSIWYG {
 		picker.on('select', function() {
 			var attachment = picker.state().get('selection').first().toJSON();
 			imgurl.value = attachment.sizes.full.url;
-			if(!altEl.value){
-				if(attachment.alt) {
-					alt = attachment.alt;
-				} else if(attachment.title) {
-					alt = attachment.title;
-				} else {
-					alt = '';
-				}
-				altEl.value = alt;
+
+			if(attachment.alt) {
+				alt = attachment.alt;
+			} else if(attachment.title) {
+				alt = attachment.title;
+			} else {
+				alt = '';
 			}
+			altEl.value = alt;
+
 			URIWYSIWYG.mediaPickerPreview(imgurl.value, altEl.value);
 		});
 		picker.open();
