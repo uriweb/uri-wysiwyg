@@ -6,25 +6,13 @@
 			wName = 'CLVideo';
     
 	function renderVideo( shortcode ) {
-		var parsed, safeData, out;
-
-		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
-		safeData = window.encodeURIComponent( shortcode );
-                
-		out = '<div class="' + cName + ' mceNonEditable" data-shortcode="' + safeData + '">';
-		out += '<img id="' + parsed.vid + '" src="' + parsed.img + '" alt="' + parsed.alt + '"';
-		if(parsed.aspect){
-				out += ' data-aspect="' + parsed.aspect + '"';
-		}
-		out += '>';
-		out += '</div>';
-		
-		return out;
 	}
 	
 	function generateVideoShortcode(params) {
 
 		var attributes = [];
+		
+		params.id = '_' + Math.random().toString(36).substr(2, 9);
         
 		for(i in params) {
 			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
@@ -101,7 +89,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderVideo );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderVideo, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

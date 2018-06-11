@@ -11,9 +11,7 @@
 	function generatePanelShortcode(params) {
 
 		var attributes = [];
-    
-    console.log(params)
-    
+        
 		if( ! params.img ) {
 			alert('Image is required for panels');
 			return false;

@@ -179,6 +179,8 @@ function uri_wysiwyg_get_html() {
 	
 // 	echo '<pre>';
 // 	print_r( $_GET['sc'] );
+// 	echo '<hr>';
+// 	print_r( $sc );
 // 	print_r ( $out );
 // 	exit;
 
