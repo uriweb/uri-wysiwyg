@@ -94,6 +94,11 @@ class URIWYSIWYG {
 			},
 			success: function( data, textStatus, jqXHR ) {
 
+				console.log(data);
+					
+
+
+
 				if(ed.$) {
 			
 					var placeHolder = ed.$('#' + id);

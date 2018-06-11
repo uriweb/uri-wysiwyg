@@ -6,39 +6,23 @@
 			wName = 'CLPanel';
     
 	function renderPanel( shortcode ) {
-		var parsed, safeData, classes, out;
-        
-		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
-		safeData = window.encodeURIComponent( shortcode );
-		classes = 'mceNonEditable ' + cName;
-		
-		out = '<div data-shortcode="' + safeData + '"';
-		if(parsed.reverse == 'true') {
-			classes += ' reverse';
-		}
-		out += ' class="' + classes + '">';
-		out += '<figure>'
-		if(parsed.img) {
-			out += '<img alt="' + parsed.alt + '" src="' + parsed.img + '"/>';
-		}
-		out += '</figure>';
-		out += '<article>';
-		if(parsed.title) {
-			out += '<h1>' + parsed.title + '</h1>';
-		}
-		if(parsed.content) {
-			out += '<p>' + parsed.content + '</p>';
-		}
-		out += '</article>';
-		out += '</div>';
-		
-		return out;
 	}
 	
 	function generatePanelShortcode(params) {
 
 		var attributes = [];
-        
+    
+    console.log(params)
+    
+		if( ! params.img ) {
+			alert('Image is required for panels');
+			return false;
+		}
+    
+		if(params.reverse == true) {
+			params.reverse = 'true';
+		}
+
 		for(i in params) {
 			if(i != 'content') {
 				attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
@@ -119,7 +103,7 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderPanel );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderPanel, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
