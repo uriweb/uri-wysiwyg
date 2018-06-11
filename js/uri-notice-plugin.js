@@ -6,36 +6,20 @@
 			wName = 'CLNotice';
 
 	function renderNotice( shortcode ) {
-		var parsed, safeData, classes, out;
-        
-		parsed = URIWYSIWYG.parseShortCodeAttributes( shortcode );
-		safeData = window.encodeURIComponent( shortcode );
-		classes = 'mceNonEditable ' + cName;
-		
-		out = '<div data-shortcode="' + safeData + '"';
-		if(parsed.urgent == 'true') {
-				classes += ' urgent';
-		}
-		out += ' class="' + classes + '">';
-		if(parsed.title) {
-				out += '<h1>' + parsed.title + '</h1>';
-		}
-		if(parsed.content) {
-				out += '<p>' + parsed.content + '</p>';
-		}
-		out += '</div>';
-
-		return out;
 	}
 	
 	function generateNoticeShortcode(params) {
 
 		var attributes = [];
+
+		console.log(params);
+		
+		if(params.style == true) {
+			params.style = 'urgent';
+		}
         
 		for(i in params) {
-			if(i != 'content') {
-				attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
-			}
+			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');	
 		}
         		
 		return '[' + cName + ' ' + attributes.join(' ') + ']' + params.content + '[/' + cName + ']';
@@ -87,7 +71,7 @@
 					body: [
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
 						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
-						{type: 'checkbox', name: 'urgent', label: 'Urgent', checked: args.urgent }
+						{type: 'checkbox', name: 'style', label: 'Urgent', checked: args.urgent }
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
@@ -102,7 +86,7 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderNotice );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderNotice, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
