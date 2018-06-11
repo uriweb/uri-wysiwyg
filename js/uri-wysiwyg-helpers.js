@@ -132,7 +132,7 @@ class URIWYSIWYG {
 	/* Replace shortcode with HTML
 	 * @param content string The editor content
 	 * @param shortcodeName string The shortcode name
-	 * @param selfclosing bool Whether the shortcode is self-closing
+	 * @param selfclosing bool Whether or not the shortcode is self-closing
 	 * @param callback function The callback function
 	 */
 	static replaceShortcodes( content, shortcodeName, selfclosing, callback, ed ) {

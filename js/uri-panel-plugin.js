@@ -19,6 +19,8 @@
     
 		if(params.reverse == true) {
 			params.reverse = 'true';
+		} else {
+			params.reverse = 'false';
 		}
 
 		for(i in params) {
@@ -86,7 +88,7 @@
 						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
 						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
-						{type: 'checkbox', name: 'reverse', label: 'Reverse', checked: args.reverse }
+						{type: 'checkbox', name: 'reverse', label: 'Reverse', checked: (args.reverse == 'true') }
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
@@ -112,7 +114,6 @@
 
 			//open popup on placeholder double click
 			ed.on('DblClick',function( event ) {
-				console.log( event.target );
 				URIWYSIWYG.openPopup( event.target, ed, cName, wName);
 			});
 
