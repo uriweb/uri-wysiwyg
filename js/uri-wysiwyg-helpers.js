@@ -225,18 +225,25 @@ class URIWYSIWYG {
 	// invokes the wp media picker from a tinymce modal
 	static mediaPicker(e) {
 		e.preventDefault();
-		var imgurl, altEl, picker, alt;
-		
-		imgurl = document.getElementById('img');
-		altEl = document.getElementById('alt');
-		picker = wp.media.frames.file_frame = wp.media({
+		var picker;
+				
+		picker = wp.media({
 			title: 'Select an image',
 			button: {text: 'Add an image'},
+			library: { type: [ 'image' ] },
 			multiple: false
-		});		
+		});
 		
+
 		picker.on('select', function() {
-			var attachment = picker.state().get('selection').first().toJSON();
+		
+			var imgurl, altEl, attachment, alt;
+			
+			imgurl = document.getElementById('img');
+			altEl = document.getElementById('alt');
+
+			attachment = picker.state().get('selection').first().toJSON();
+			
 			imgurl.value = attachment.sizes.full.url;
 
 			if(attachment.alt) {
@@ -249,9 +256,15 @@ class URIWYSIWYG {
 			altEl.value = alt;
 
 			URIWYSIWYG.mediaPickerPreview(imgurl.value, altEl.value);
+			
 		});
+		
 		picker.open();
+		
+		return false;
+
 	}
+
 	
 	static mediaPickerPreview(src, alt) {
 		var preview;
