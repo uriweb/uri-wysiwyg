@@ -2,11 +2,8 @@
 
 (function() {
     
-	var cNames = ['cl-card'],
-			wName = 'CLCard';
-
-	function renderCard( shortcode ) {
-	}
+	var cNames = ['cl-card', 'cl-dcard'],
+		wName = 'CLCard';
 	
 	function generateCardShortcode(params) {
 
@@ -53,9 +50,7 @@
 		
 			// add a js callback for the button
 			ed.addCommand(wName, function(target, args) {
-				
-				console.log(target, args);
-			
+							
 				// create an empty object if args is empty
 				if(!args) {
 					args = {style:'', title:'', body:'', link:''}
@@ -100,9 +95,11 @@
 						shortcode = generateCardShortcode(e.data);
 						if ( target ) {
 							var id = URIWYSIWYG.generateID();
-							console.log('generated', id);
-							jQuery(target).replaceWith('<div class="loading" data-shortcode="' + window.encodeURIComponent( shortcode ) + '" id="' + id + '">Loading...</div>');
-							URIWYSIWYG.getHTML( ed, shortcode, id, 'mceNonEditable ' + cNames[0] );
+							jQuery(target).replaceWith( URIWYSIWYG.generateLoadingDiv( window.encodeURIComponent( shortcode ), id ) );
+							
+							for (var i=0; i<cNames.length; i++) {
+								URIWYSIWYG.getHTML( ed, shortcode, id, 'mceNonEditable ' + cNames[i] );
+							}
 						} else {
 							ed.execCommand('mceInsertContent', 0, shortcode);
 						}
@@ -115,9 +112,8 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				console.log(event);
 				for (var i=0; i<cNames.length; i++) {
-					event.content = URIWYSIWYG.replaceShortcodes( event.content, cNames[i], true, renderCard, ed );
+					event.content = URIWYSIWYG.replaceShortcodes( event.content, cNames[i], true, ed );
 				}
 			});
 

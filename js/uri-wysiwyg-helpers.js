@@ -96,12 +96,10 @@ class URIWYSIWYG {
 
 				if(ed.$) {
 			
-					var placeHolder = ed.$('#' + id);
-					console.log(id);
-					
+					var placeHolder = ed.$('#' + id);					
 					var d = document.createElement('div');
 					
-					if( data.match( 'class="cl-card' ) ) {
+					if( data.match( 'class="cl-card' ) || data.match( 'class="cl-dcard' ) ) {
 						// replace the <a class="cl-card"> element with a <div>
 						// because TinyMCE doesn't like block-level elements inside of inline elements
 						data = data.replace('<a ', '<div ');
@@ -134,9 +132,9 @@ class URIWYSIWYG {
 	 * @param content string The editor content
 	 * @param shortcodeName string The shortcode name
 	 * @param selfclosing bool Whether or not the shortcode is self-closing
-	 * @param callback function The callback function
+	 * @param ed obj The editor
 	 */
-	static replaceShortcodes( content, shortcodeName, selfclosing, callback, ed ) {
+	static replaceShortcodes( content, shortcodeName, selfclosing, ed ) {
 
 		var re = selfclosing ? new RegExp('\\[' + shortcodeName + '([^\\]]*)\\]', 'g') : new RegExp('\\[' + shortcodeName + '.+?\\[/' + shortcodeName + '\\]', 'g');
 
@@ -148,21 +146,29 @@ class URIWYSIWYG {
 			safeData = window.encodeURIComponent( match );
 			classes = 'mceNonEditable ' + shortcodeName;
 
-			// generate a random ID
 			var id = URIWYSIWYG.generateID();
-			out = '<div class="loading" data-shortcode="' + safeData + '" id="' + id + '">Loading...</div>';
+			out = URIWYSIWYG.generateLoadingDiv( safeData, id );
 			
-			console.log("replace", id);
 			URIWYSIWYG.getHTML( ed, match, id, classes );
-			callback( match, out, ed );
 			return out;
 
 		});
 	}
 	
 	
+	/* Generates a random ID
+	 */
 	static generateID() {
 		return '_' + Math.random().toString(36).substr(2, 9);
+	}
+	
+	
+	/* Generates the loading div
+	 * @param data str The shortcode data
+	 * @param id The random id
+	 */
+	static generateLoadingDiv( data, id ) {
+		return '<div class="loading" data-shortcode="' + data + '" id="' + id + '">Loading...</div>';	
 	}
 
 	
@@ -303,8 +309,6 @@ class URIWYSIWYG {
 				target = jQuery(target).closest( '.' + cName + '-wrapper' )[0];	
 			}
 			
-			console.log(target);
-
 			sc = window.decodeURIComponent( target.getAttribute('data-shortcode') );
 			attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
 			ed.execCommand(wName, target, attributes);
