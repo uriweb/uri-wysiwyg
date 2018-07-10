@@ -3,11 +3,7 @@
 (function() {
 
 	var cName = 'cl-boxout',
-			wName = 'CLBoxout';
-    
-	function renderBoxout( shortcode ) {
-	}
-
+		wName = 'CLBoxout';
 	
 	function generateBoxoutShortcode(params) {
 
@@ -47,7 +43,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -86,7 +82,7 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderBoxout, this );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

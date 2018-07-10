@@ -3,12 +3,7 @@
 (function() {
    
 	var cName = 'cl-button',
-			wName = 'CLButton';
-	
-
-	function renderButton( shortcode, ed ) {
-
-	}
+		wName = 'CLButton';
 	
 	function generateButtonShortcode(params) {
 
@@ -54,7 +49,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -91,7 +86,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderButton, this );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, this );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

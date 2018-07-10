@@ -3,10 +3,7 @@
 (function() {
 
 	var cName = 'cl-panel',
-			wName = 'CLPanel';
-    
-	function renderPanel( shortcode ) {
-	}
+		wName = 'CLPanel';
 	
 	function generatePanelShortcode(params) {
 
@@ -57,7 +54,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 
 				// create an empty object if args is empty
 				if(!args) {
@@ -92,8 +89,8 @@
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						shortcode = generatePanelShortcode(e.data);
-						ed.execCommand('mceInsertContent', 0, shortcode);
+						var shortcode = generatePanelShortcode(e.data);
+						URIWYSIWYG.insertMultiMediaComponent( target, shortcode, ed, cName );
 					}
 				},
 				{
@@ -103,7 +100,7 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderPanel, ed );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

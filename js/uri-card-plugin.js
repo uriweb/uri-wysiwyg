@@ -49,7 +49,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(target, args) {
+			ed.addCommand(wName, function( target, args ) {
 							
 				// create an empty object if args is empty
 				if(!args) {
@@ -92,17 +92,8 @@
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						shortcode = generateCardShortcode(e.data);
-						if ( target ) {
-							var id = URIWYSIWYG.generateID();
-							jQuery(target).replaceWith( URIWYSIWYG.generateLoadingDiv( window.encodeURIComponent( shortcode ), id ) );
-							
-							for (var i=0; i<cNames.length; i++) {
-								URIWYSIWYG.getHTML( ed, shortcode, id, 'mceNonEditable ' + cNames[i] );
-							}
-						} else {
-							ed.execCommand('mceInsertContent', 0, shortcode);
-						}
+						var shortcode = generateCardShortcode(e.data);
+						URIWYSIWYG.insertMultiMediaComponent( target, shortcode, ed, cNames );
 					}
 				},
 				{

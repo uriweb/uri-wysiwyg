@@ -3,11 +3,7 @@
 (function() {
 
 	var cName = 'cl-hero',
-			wName = 'CLHero';
-    
-	function renderHero( shortcode ) {
-
-	}
+		wName = 'CLHero';
 	
 	function generateHeroShortcode(params) {
 
@@ -47,7 +43,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -86,8 +82,8 @@
 						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
 						{type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
-		        {type: 'textbox', name: 'headline', label: 'Headline', value: args.headline},
-            {type: 'textbox', multiline: 'true', name: 'subhead', label: 'Subheader', value: args.subhead},
+		        		{type: 'textbox', name: 'headline', label: 'Headline', value: args.headline},
+            			{type: 'textbox', multiline: 'true', name: 'subhead', label: 'Subheader', value: args.subhead},
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
 						{type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
 						{type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip}
@@ -95,8 +91,8 @@
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						shortcode = generateHeroShortcode(e.data);
-						ed.execCommand('mceInsertContent', 0, shortcode);
+						var shortcode = generateHeroShortcode(e.data);
+						URIWYSIWYG.insertMultiMediaComponent( target, shortcode, ed, cName );
 					}
 				},
 				{
@@ -106,7 +102,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderHero, ed );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

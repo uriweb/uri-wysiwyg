@@ -144,7 +144,7 @@ class URIWYSIWYG {
 			var safeData, classes, out;
 	
 			safeData = window.encodeURIComponent( match );
-			classes = 'mceNonEditable ' + shortcodeName;
+			classes = URIWYSIWYG.generateNonEditableClasses( shortcodeName );
 
 			var id = URIWYSIWYG.generateID();
 			out = URIWYSIWYG.generateLoadingDiv( safeData, id );
@@ -153,6 +153,42 @@ class URIWYSIWYG {
 			return out;
 
 		});
+	}
+	
+	
+	/* Insert/Replace multimedia content
+	 * @param target obj The target component
+	 * @param shortcode str The shortcode
+	 * @param ed obj The editor instance
+	 * @param cNames mixed The component name(s)
+	 */
+	static insertMultiMediaComponent( target, shortcode, ed, cNames ) {
+		
+		var id, i;
+		
+		if ( target ) {
+			id = URIWYSIWYG.generateID();
+			jQuery(target).replaceWith( URIWYSIWYG.generateLoadingDiv( window.encodeURIComponent( shortcode ), id ) );
+			
+			if ( Array.isArray( cNames ) ) {
+				for ( i = 0; i<cNames.length; i++ ) {
+					URIWYSIWYG.getHTML( ed, shortcode, id, URIWYSIWYG.generateNonEditableClasses( cNames[i] ) );
+				}
+			} else {
+				URIWYSIWYG.getHTML( ed, shortcode, id, URIWYSIWYG.generateNonEditableClasses( cNames ) );
+			}
+			
+		} else {
+			ed.execCommand( 'mceInsertContent', 0, shortcode );
+		}
+	}
+	
+	
+	/* Generates the mceNonEditable classes
+	 * @param name str The shortcode name
+	 */
+	static generateNonEditableClasses( name ) {
+		return 'mceNonEditable ' + name + '-noneditable';
 	}
 	
 	
@@ -207,25 +243,13 @@ class URIWYSIWYG {
 		// convert the content string into a DOM tree so we can parse it easily
 		html = document.createElement('div');
 		html.innerHTML = content;
-		componentElements = html.querySelectorAll('.' + sc);
+		componentElements = html.querySelectorAll('.' + sc + '-noneditable');
 
 		// componentElements contains an array of the shortcodes
 	
 		for(i=0; i<componentElements.length; i++) {
 			t = document.createTextNode( window.decodeURIComponent( componentElements[i].getAttribute( 'data-shortcode' ) ) );
-
-			// I'm not crazy about the blend of js and jQuery here... clean up
-
-			// see if the component has a wrapper element
-			wrapper = jQuery(componentElements[i]).closest( '.' + sc + '-wrapper' );
-
-			// If the component has a wrapper element, replace the wrapper
-			// otherwise, replace the component
-			if ( wrapper.length > 0 ) {
-				wrapper[0].replaceWith(t);
-			} else {
-				componentElements[i].parentNode.replaceChild(t, componentElements[i]);
-			}
+			componentElements[i].parentNode.replaceChild(t, componentElements[i]);
 		}
 
 		//return the DOM tree as a string

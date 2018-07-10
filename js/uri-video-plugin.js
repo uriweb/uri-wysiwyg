@@ -3,10 +3,7 @@
 (function() {
 
 	var cName = 'cl-video',
-			wName = 'CLVideo';
-    
-	function renderVideo( shortcode ) {
-	}
+		wName = 'CLVideo';
 	
 	function generateVideoShortcode(params) {
 
@@ -44,7 +41,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -78,8 +75,8 @@
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						shortcode = generateVideoShortcode(e.data);
-						ed.execCommand('mceInsertContent', 0, shortcode);
+						var shortcode = generateVideoShortcode(e.data);
+						URIWYSIWYG.insertMultiMediaComponent( target, shortcode, ed, cName );
 					}
 				},
 				{
@@ -89,7 +86,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderVideo, ed );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

@@ -63,7 +63,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {

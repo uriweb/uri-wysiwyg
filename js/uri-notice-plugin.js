@@ -3,11 +3,8 @@
 (function() {
     
 	var cName = 'cl-notice',
-			wName = 'CLNotice';
+		wName = 'CLNotice';
 
-	function renderNotice( shortcode ) {
-	}
-	
 	function generateNoticeShortcode(params) {
 
 		var attributes = [];
@@ -50,7 +47,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -86,7 +83,7 @@
 			});
             
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, renderNotice, ed );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, false, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
