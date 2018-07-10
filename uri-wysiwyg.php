@@ -31,13 +31,15 @@ function uri_wysiwyg_register_tinymce_plugin( $plugin_array ) {
 	$plugin_array['uri_wysiwyg_card'] = plugins_url( '/js/uri-card-plugin.js', __FILE__ );
     // load the custom heros plugin
 	$plugin_array['uri_wysiwyg_hero'] = plugins_url( '/js/uri-hero-plugin.js', __FILE__ );
+	// load the custom metric plugin
+	$plugin_array['uri_wysiwyg_metric'] = plugins_url( '/js/uri-metric-plugin.js', __FILE__ );
     // load the custom notice plugin
 	$plugin_array['uri_wysiwyg_notice'] = plugins_url( '/js/uri-notice-plugin.js', __FILE__ );
     // load the custom panel plugin
 	$plugin_array['uri_wysiwyg_panel'] = plugins_url( '/js/uri-panel-plugin.js', __FILE__ );
     // load the custom video plugin
 	$plugin_array['uri_wysiwyg_video'] = plugins_url( '/js/uri-video-plugin.js', __FILE__ );
-
+    // load the custom tiles plugin
 	$plugin_array['uri_wysiwyg_tiles'] = plugins_url( '/js/uri-tiles-plugin.js', __FILE__ );
 
 	return $plugin_array;
@@ -50,7 +52,7 @@ add_filter( 'mce_external_plugins', 'uri_wysiwyg_register_tinymce_plugin' );
  *
  */
 function uri_wysiwyg_register_buttons( $buttons ) {
-	array_unshift( $buttons, 'CLBoxout', 'CLButton', 'CLCard', 'CLHero', 'CLNotice', 'CLPanel', 'CLVideo', 'CLTiles' );
+	array_unshift( $buttons, 'CLBoxout', 'CLButton', 'CLCard', 'CLHero', 'CLMetric', 'CLNotice', 'CLPanel', 'CLVideo', 'CLTiles' );
 	return $buttons;
 }
 // add new buttons

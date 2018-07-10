@@ -2,10 +2,10 @@
 
 (function() {
     
-	var cName = 'cl-notice',
-		wName = 'CLNotice';
+	var cName = 'cl-metric',
+		wName = 'CLMetric';
 
-	function generateNoticeShortcode(params) {
+	function generateMetricShortcode(params) {
 
 		var attributes = [];
 		
@@ -25,7 +25,7 @@
 
 
 
-	tinymce.create('tinymce.plugins.uri_wysiwyg_notice', {
+	tinymce.create('tinymce.plugins.uri_wysiwyg_metric', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
 		 * This call is done before the editor instance has finished it's initialization so use the onInit event
@@ -38,10 +38,10 @@
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
 			ed.addButton(wName, {
-				title : 'Notice',
+				title : 'Metric',
 				text : '',
 				cmd : wName,
-				image : url + '/i/notice.png'
+				image : url + '/i/metric.png'
 			});
 		
 			// add a js callback for the button
@@ -52,7 +52,7 @@
 					args = {}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['title', 'content', 'style'];
+				var possibleArgs = ['metric', 'caption', 'style', 'float'];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
@@ -62,19 +62,27 @@
 				args = URIWYSIWYG.unEscapeQuotesDeep(args);
 
 				ed.windowManager.open({
-					title: 'Insert / Update Notice',
+					title: 'Insert / Update Metric',
 					body: [
-						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
-						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
+						{type: 'textbox', name: 'metric', label: 'Metric', value: args.metric},
+						{type: 'textbox', name: 'caption', label: 'Caption', value: args.caption},
 						{type: 'listbox', name: 'style', label: 'Style', value: args.style, 'values': [
 							{text: 'Default', value: ''},
-							{text: 'Urgent', value: 'urgent'}
+							{text: 'Dark', value: 'dark'},
+							{text: 'Clear', value: 'clear'},
+							{text: 'Overlay', value: 'overlay'}
+						]
+						},
+						{type: 'listbox', name: 'float', label: 'Alignment', value: args.float, 'values': [
+							{text: 'Auto', value: ''},
+							{text: 'Left', value: 'left'},
+							{text: 'Right', value: 'right'}
 						]
 						},
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						shortcode = generateNoticeShortcode(e.data);
+						shortcode = generateMetricShortcode(e.data);
 						ed.execCommand('mceInsertContent', 0, shortcode);
 					}
 				},
@@ -136,7 +144,7 @@
 	});
 
 	// Register plugin
-	tinymce.PluginManager.add( 'uri_wysiwyg_notice', tinymce.plugins.uri_wysiwyg_notice );
+	tinymce.PluginManager.add( 'uri_wysiwyg_metric', tinymce.plugins.uri_wysiwyg_metric );
 
 
 })();
