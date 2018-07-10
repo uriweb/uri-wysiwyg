@@ -52,7 +52,9 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function(target, args) {
+				
+				console.log(target, args);
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -96,7 +98,14 @@
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
 						shortcode = generateCardShortcode(e.data);
-						ed.execCommand('mceInsertContent', 0, shortcode);
+						if ( target ) {
+							var id = URIWYSIWYG.generateID();
+							console.log('generated', id);
+							jQuery(target).replaceWith('<div class="loading" data-shortcode="' + window.encodeURIComponent( shortcode ) + '" id="' + id + '">Loading...</div>');
+							URIWYSIWYG.getHTML( ed, shortcode, id, 'mceNonEditable ' + cNames[0] );
+						} else {
+							ed.execCommand('mceInsertContent', 0, shortcode);
+						}
 					}
 				},
 				{
@@ -106,6 +115,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
+				console.log(event);
 				for (var i=0; i<cNames.length; i++) {
 					event.content = URIWYSIWYG.replaceShortcodes( event.content, cNames[i], true, renderCard, ed );
 				}

@@ -97,6 +97,7 @@ class URIWYSIWYG {
 				if(ed.$) {
 			
 					var placeHolder = ed.$('#' + id);
+					console.log(id);
 					
 					var d = document.createElement('div');
 					
@@ -148,14 +149,20 @@ class URIWYSIWYG {
 			classes = 'mceNonEditable ' + shortcodeName;
 
 			// generate a random ID
-			var id = '_' + Math.random().toString(36).substr(2, 9);
-			URIWYSIWYG.getHTML( ed, match, id, classes );
-		
+			var id = URIWYSIWYG.generateID();
 			out = '<div class="loading" data-shortcode="' + safeData + '" id="' + id + '">Loading...</div>';
+			
+			console.log("replace", id);
+			URIWYSIWYG.getHTML( ed, match, id, classes );
 			callback( match, out, ed );
 			return out;
 
 		});
+	}
+	
+	
+	static generateID() {
+		return '_' + Math.random().toString(36).substr(2, 9);
 	}
 
 	
@@ -295,10 +302,12 @@ class URIWYSIWYG {
 				// see if the component has a wrapper element
 				target = jQuery(target).closest( '.' + cName + '-wrapper' )[0];	
 			}
+			
+			console.log(target);
 
 			sc = window.decodeURIComponent( target.getAttribute('data-shortcode') );
 			attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
-			ed.execCommand(wName, attributes);
+			ed.execCommand(wName, target, attributes);
 		}
    }
 	
