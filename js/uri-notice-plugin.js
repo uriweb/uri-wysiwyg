@@ -54,7 +54,7 @@
 					args = {}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['title', 'content', 'urgent'];
+				var possibleArgs = ['title', 'content', 'style'];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
@@ -68,7 +68,11 @@
 					body: [
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
 						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
-						{type: 'checkbox', name: 'style', label: 'Urgent', checked: args.urgent }
+						{type: 'listbox', name: 'style', label: 'Style', value: args.style, 'values': [
+							{text: 'Default', value: ''},
+							{text: 'Urgent', value: 'urgent'}
+						]
+						},
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted

@@ -56,7 +56,7 @@
 					args = {style:'', title:'', body:'', link:''}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['title', 'body', 'link', 'button', 'img', 'alt', 'tooltip'];
+				var possibleArgs = ['title', 'body', 'link', 'button', 'img', 'alt', 'tooltip', 'float'];
 				if(!args.title) {
 					args.title = '';
 				}
@@ -88,7 +88,13 @@
 						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
 						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
-						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker}
+						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
+						{type: 'listbox', name: 'float', label: 'Alignment', value: args.float, 'values': [
+							{text: 'Auto', value: ''},
+							{text: 'Left', value: 'left'},
+							{text: 'Right', value: 'right'}
+						]
+						},
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted

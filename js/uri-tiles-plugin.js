@@ -32,9 +32,6 @@
 			case '5': 
 			columns = 'fifths';
 			break;
-			case '6': 
-			columns = 'sixths';
-			break;
 		}
 		return columns;
 	}
@@ -87,7 +84,6 @@
 								{text: 'Three', value: '3'},
 								{text: 'Four', value: '4'},
 								{text: 'Five', value: '5'},
-								{text: 'Six', value: '6'}
 								]
 						},
 					],

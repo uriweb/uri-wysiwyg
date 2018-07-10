@@ -63,10 +63,10 @@
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
 						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
 						{type: 'listbox', name: 'float', label: 'Alignment', value: args.float, 'values': [
-						{text: 'Auto', value: ''},
-						{text: 'Left', value: 'left'},
-						{text: 'Right', value: 'right'}
-					]
+							{text: 'Auto', value: ''},
+							{text: 'Left', value: 'left'},
+							{text: 'Right', value: 'right'}
+						]
 						},
 					],
 					onsubmit: function(e) {
