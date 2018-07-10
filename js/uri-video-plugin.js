@@ -3,10 +3,7 @@
 (function() {
 
 	var cName = 'cl-video',
-			wName = 'CLVideo';
-    
-	function renderVideo( shortcode ) {
-	}
+		wName = 'CLVideo';
 	
 	function generateVideoShortcode(params) {
 
@@ -44,14 +41,14 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {
 					args = {}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['img', 'vid', 'alt', 'aspect'];
+				var possibleArgs = ['img', 'vid', 'alt', 'aspect', 'id', 'title', 'excerpt'];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
@@ -64,6 +61,11 @@
 				if(args.img) {
 					imageEl = '<img src="' + args.img + '" alt="' + args.alt + '" />';
 				}
+				
+				// Set an initial unique id for the video component, since it's required
+				if (!args.id) { 
+					args.id = URIWYSIWYG.generateID();
+				}
 
 				ed.windowManager.open({
 					title: 'Insert / Update Video',
@@ -73,13 +75,25 @@
 						{type: 'button', label: 'Image (required)', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
 						{type: 'textbox', name: 'alt', id: 'alt', label: 'Image Alt Text', value: args.alt},
+						{type: 'textbox', name: 'id', label: 'Unique ID', value: args.id},
 						{type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
-						{type: 'textbox', name: 'aspect', label: 'Aspect Ratio', 'placeholder': '16:9', value: args.aspect}
+						{type: 'textbox', name: 'aspect', label: 'Aspect Ratio', 'placeholder': '16:9', value: args.aspect},
+						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
+						{type: 'textbox', name: 'excerpt', multiline: 'true', label: 'Excerpt', value: args.excerpt}
 					],
 					onsubmit: function(e) {
+						
+						// Sanitize unique id
+						if (!e.data.id) { 
+							e.data.id = URIWYSIWYG.generateID();
+						} else {
+							e.data.id = e.data.id.replace(/\s/g, '');
+						}
+						
 						// Insert content when the window form is submitted
-						shortcode = generateVideoShortcode(e.data);
-						ed.execCommand('mceInsertContent', 0, shortcode);
+						var shortcode = generateVideoShortcode(e.data);
+						URIWYSIWYG.insertMultiMediaComponent( target, shortcode, ed, cName );
+						
 					}
 				},
 				{
@@ -89,7 +103,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderVideo, ed );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

@@ -3,11 +3,7 @@
 (function() {
 
 	var cName = 'cl-hero',
-			wName = 'CLHero';
-    
-	function renderHero( shortcode ) {
-
-	}
+		wName = 'CLHero';
 	
 	function generateHeroShortcode(params) {
 
@@ -47,7 +43,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -56,14 +52,16 @@
 				// create an empty property so nothing is null
 				var possibleArgs = [
 						'img', 
+						'id',
 						'vid', 
-						'dynamic', 
 						'headline', 
 						'subhead', 
 						'link',
 						'button',
 						'tooltip',
-						'alt'
+						'alt',
+						'format',
+						'animation'
 				];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
@@ -75,6 +73,11 @@
 				if(args.img) {
 					imageEl = '<img src="' + args.img + '" alt="' + args.alt + '" />';
 				}
+				
+				// Set an initial unique id for the hero component, since it's required
+				if (!args.id) { 
+					args.id = URIWYSIWYG.generateID();
+				}
 
 				ed.windowManager.open({
 					title: 'Insert / Update Hero',
@@ -82,21 +85,41 @@
 					body: [
 						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
 						{type: 'button', label: 'Image (required)', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
-						{type: 'checkbox', name: 'dynamic', label: 'Dynamic Zoom', checked: args.dynamic },
 						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
 						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
+						{type: 'textbox', name: 'id', label: 'Unique ID', value: args.id},
 						{type: 'textbox', name: 'vid', label: 'YouTube ID', value: args.vid},
-		        {type: 'textbox', name: 'headline', label: 'Headline', value: args.headline},
-            {type: 'textbox', multiline: 'true', name: 'subhead', label: 'Subheader', value: args.subhead},
+		        		{type: 'textbox', name: 'headline', label: 'Headline', value: args.headline},
+            			{type: 'textbox', multiline: 'true', name: 'subhead', label: 'Subheader', value: args.subhead},
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
 						{type: 'textbox', name: 'button', label: 'Button Text', 'placeholder':'Explore', value: args.button},
-						{type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip}
+						{type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip},
+						{type: 'listbox', name: 'format', label: 'Format', value: args.format, 'values': [
+							{text: 'Default', value: ''},
+							{text: 'Full Width', value: 'fullwidth'},
+							{text: 'Super', value: 'super'}
+						]
+						},
+						{type: 'listbox', name: 'animation', label: 'Animation', value: args.animation, 'values': [
+							{text: 'None', value: ''},
+							{text: 'Shift', value: 'shift'}
+						]
+						},
 
 					],
 					onsubmit: function(e) {
+						
+						// Sanitize unique id
+						if (!e.data.id) { 
+							e.data.id = URIWYSIWYG.generateID();
+						} else {
+							e.data.id = e.data.id.replace(/\s/g, '');
+						}
+						
 						// Insert content when the window form is submitted
-						shortcode = generateHeroShortcode(e.data);
-						ed.execCommand('mceInsertContent', 0, shortcode);
+						var shortcode = generateHeroShortcode(e.data);
+						URIWYSIWYG.insertMultiMediaComponent( target, shortcode, ed, cName );
+						
 					}
 				},
 				{
@@ -106,7 +129,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderHero, ed );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, ed );
 			});
 
 			ed.on( 'PostProcess', function( event ) {

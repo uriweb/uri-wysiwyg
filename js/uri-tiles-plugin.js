@@ -32,9 +32,6 @@
 			case '5': 
 			columns = 'fifths';
 			break;
-			case '6': 
-			columns = 'sixths';
-			break;
 		}
 		return columns;
 	}
@@ -63,7 +60,7 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {
@@ -87,7 +84,6 @@
 								{text: 'Three', value: '3'},
 								{text: 'Four', value: '4'},
 								{text: 'Five', value: '5'},
-								{text: 'Six', value: '6'}
 								]
 						},
 					],

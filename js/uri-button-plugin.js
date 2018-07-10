@@ -3,12 +3,7 @@
 (function() {
    
 	var cName = 'cl-button',
-			wName = 'CLButton';
-	
-
-	function renderButton( shortcode, ed ) {
-
-	}
+		wName = 'CLButton';
 	
 	function generateButtonShortcode(params) {
 
@@ -54,14 +49,14 @@
 			});
 		
 			// add a js callback for the button
-			ed.addCommand(wName, function(args) {
+			ed.addCommand(wName, function( target, args ) {
 			
 				// create an empty object if args is empty
 				if(!args) {
 					args = {}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['link', 'text', 'tooltip', 'prominent'];
+				var possibleArgs = ['link', 'text', 'tooltip', 'style'];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
@@ -76,7 +71,12 @@
 						{type: 'textbox', name: 'link', label: 'Link', value: args.link},
 						{type: 'textbox', name: 'text', label: 'Text', 'placeholder':'Explore', value: args.text},
 						{type: 'textbox', name: 'tooltip', label: 'Tooltip', value: args.tooltip},
-						{type: 'checkbox', name: 'prominent', label: 'Prominent', checked: (args.style == 'prominent') },
+						{type: 'listbox', name: 'style', label: 'Style', value: args.style, 'values': [
+							{text: 'Default', value: ''},
+							{text: 'Prominent', value: 'prominent'},
+							{text: 'Disabled', value: 'disabled'}
+						]
+						},
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
@@ -91,7 +91,7 @@
 			});
 
 			ed.on( 'BeforeSetContent', function( event ) {
-				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, renderButton, this );
+				event.content = URIWYSIWYG.replaceShortcodes( event.content, cName, true, this );
 			});
 
 			ed.on( 'PostProcess', function( event ) {
