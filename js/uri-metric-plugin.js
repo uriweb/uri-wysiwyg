@@ -8,10 +8,6 @@
 	function generateMetricShortcode(params) {
 
 		var attributes = [];
-		
-		if(params.style == true) {
-			params.style = 'urgent';
-		}
         
 		for(i in params) {
 			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');	

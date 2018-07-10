@@ -8,9 +8,7 @@
 	function generateVideoShortcode(params) {
 
 		var attributes = [];
-		
-		params.id = '_' + Math.random().toString(36).substr(2, 9);
-        
+		        
 		for(i in params) {
 			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 		}

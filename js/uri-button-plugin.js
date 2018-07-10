@@ -9,10 +9,6 @@
 
 		var attributes = [];
 		
-		if(params.prominent == true) {
-			params.style = 'prominent';
-		}
-
 		if(!params.text) {
 			params.text = 'Explore';
 		}

@@ -10,7 +10,7 @@
 		var attributes = [];
 
 		if(!params.button) {
-				params.button = 'Explore';
+			params.button = 'Explore';
 		}
         
 		for(i in params) {
