@@ -14,9 +14,6 @@
 		}
         
 		for(i in params) {
-			if(i == 'prominent') {
-				continue;
-			}
 			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 		}
 			

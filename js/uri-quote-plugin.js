@@ -1,18 +1,18 @@
 // https://code.tutsplus.com/tutorials/guide-to-creating-your-own-wordpress-editor-buttons--wp-30182
 
 (function() {
-    
-	var cName = 'cl-metric',
-		wName = 'CLMetric';
 
-	function generateMetricShortcode(params) {
+	var cName = 'cl-quote',
+		wName = 'CLQuote';
+	
+	function generateQuoteShortcode(params) {
 
 		var attributes = [];
-        
+    
 		for(i in params) {
-			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');	
+			attributes.push(i + '="' + URIWYSIWYG.htmlEscape( params[i] ) + '"');
 		}
-        		
+
 		return '[' + cName + ' ' + attributes.join(' ') + ']';
 
 	}
@@ -21,7 +21,7 @@
 
 
 
-	tinymce.create('tinymce.plugins.uri_wysiwyg_metric', {
+	tinymce.create('tinymce.plugins.uri_wysiwyg_quote', {
 		/**
 		 * Initializes the plugin, this will be executed after the plugin has been created.
 		 * This call is done before the editor instance has finished it's initialization so use the onInit event
@@ -34,52 +34,46 @@
 
 			// add the button that the WP plugin defined in the mce_buttons filter callback
 			ed.addButton(wName, {
-				title : 'Metric',
+				title : 'Quote',
 				text : '',
 				cmd : wName,
-				image : url + '/i/metric.png'
+				image : url + '/i/quote.png'
 			});
 		
 			// add a js callback for the button
 			ed.addCommand(wName, function( target, args ) {
-			
+
 				// create an empty object if args is empty
 				if(!args) {
 					args = {}
 				}
 				// create an empty property so nothing is null
-				var possibleArgs = ['metric', 'caption', 'style', 'float'];
+				var possibleArgs = ['img', 'alt', 'quote', 'citation'];
 				possibleArgs.forEach(function(i){
 					if(!args[i]) {
 						args[i] = '';
 					}
 				});
-				// prevent nested quotes... escape / unescape instead?
-				args = URIWYSIWYG.unEscapeQuotesDeep(args);
+				
+				var imageEl = '';
+				if(args.img) {
+					imageEl = '<img src="' + args.img + '" alt="' + args.alt + '" />';
+				}
 
 				ed.windowManager.open({
-					title: 'Insert / Update Metric',
+					title: 'Insert / Update Quote',
 					body: [
-						{type: 'textbox', name: 'metric', label: 'Metric', value: args.metric},
-						{type: 'textbox', name: 'caption', label: 'Caption', value: args.caption},
-						{type: 'listbox', name: 'style', label: 'Style', value: args.style, 'values': [
-							{text: 'Default', value: ''},
-							{text: 'Dark', value: 'dark'},
-							{text: 'Clear', value: 'clear'},
-							{text: 'Overlay', value: 'overlay'}
-						]
-						},
-						{type: 'listbox', name: 'float', label: 'Alignment', value: args.float, 'values': [
-							{text: 'Auto', value: ''},
-							{text: 'Left', value: 'left'},
-							{text: 'Right', value: 'right'}
-						]
-						},
+						{type: 'textbox', name: 'alt', id: 'alt', value: args.alt, subtype: 'hidden'},
+						{type: 'textbox', name: 'img', id: 'img', value: args.img, subtype: 'hidden'},
+						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
+						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
+						{type: 'textbox', multiline: 'true', name: 'quote', label: 'Quote', value: args.quote},
+						{type: 'textbox', name: 'citation', label: 'Citation', value: args.citation}
 					],
 					onsubmit: function(e) {
 						// Insert content when the window form is submitted
-						shortcode = generateMetricShortcode(e.data);
-						ed.execCommand('mceInsertContent', 0, shortcode);
+						var shortcode = generateQuoteShortcode(e.data);
+						URIWYSIWYG.insertMultiMediaComponent( target, shortcode, ed, cName );
 					}
 				},
 				{
@@ -140,7 +134,7 @@
 	});
 
 	// Register plugin
-	tinymce.PluginManager.add( 'uri_wysiwyg_metric', tinymce.plugins.uri_wysiwyg_metric );
+	tinymce.PluginManager.add( 'uri_wysiwyg_quote', tinymce.plugins.uri_wysiwyg_quote );
 
 
 })();
