@@ -136,7 +136,7 @@ class URIWYSIWYG {
 	 */
 	static replaceShortcodes( content, shortcodeName, selfclosing, ed ) {
 
-		var re = selfclosing ? new RegExp('\\[' + shortcodeName + '([^\\]]*)\\]', 'g') : new RegExp('\\[' + shortcodeName + '.+?\\[/' + shortcodeName + '\\]', 'g');
+		var re = selfclosing ? new RegExp('\\[' + shortcodeName + '([^\\]]*)\\]', 'g') : new RegExp('\\[' + shortcodeName + '[^]+?\\[/' + shortcodeName + '\\]', 'g');
 
         
 		return content.replace( re, function( match ) {
@@ -224,7 +224,7 @@ class URIWYSIWYG {
 			attributes[t[0]] = t[1];
 		}
         
-		innerContent = sc.match(/\].+?\[/gi);
+		innerContent = sc.match(/\][^]+?\[/gi);
 		if (innerContent) {
 			attributes['content'] = innerContent[0].replace(/^\]|\[$/gi,'').trim();
 		}
@@ -335,6 +335,7 @@ class URIWYSIWYG {
 			
 			sc = window.decodeURIComponent( target.getAttribute('data-shortcode') );
 			attributes = URIWYSIWYG.parseShortCodeAttributes(sc);
+			console.log(attributes);
 			ed.execCommand(wName, target, attributes);
 		}
    }
