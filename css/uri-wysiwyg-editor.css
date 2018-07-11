@@ -4,3 +4,7 @@
 	min-height: 2rem;
 	outline: 1px dashed #999;
 }
+
+.cl-hero.super {
+	max-height: 800px;
+}
