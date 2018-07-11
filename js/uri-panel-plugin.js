@@ -84,7 +84,7 @@
 						{type: 'container', label: ' ', html: '<div id="wysiwyg-img-preview">' + imageEl + '</div>'},
 						{type: 'button', label: 'Image', text: 'Choose an image', onclick: URIWYSIWYG.mediaPicker},
 						{type: 'textbox', name: 'title', label: 'Title', value: args.title},
-						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content},
+						{type: 'textbox', multiline: 'true', name: 'content', label: 'Content', value: args.content, rows: 7, style: ''},
 						{type: 'checkbox', name: 'reverse', label: 'Reverse', checked: (args.reverse == 'true') }
 					],
 					onsubmit: function(e) {
