@@ -23,26 +23,32 @@ function uri_wysiwyg_register_tinymce_plugin( $plugin_array ) {
 	// load up the noneditable plugin from TinyMCE
 	$plugin_array['noneditable'] = plugins_url( '/js/noneditable/plugin.min.js', __FILE__ );
 
+	// IMPORTANT
+	// load the components that are more likely to have a nested component first.
+	// because nested components don't play well with TinyMCE
+	
 	// load the custom boxout plugin
 	$plugin_array['uri_wysiwyg_boxout'] = plugins_url( '/js/uri-boxout-plugin.js', __FILE__ );
-	// load the custom buttons plugin
-	$plugin_array['uri_wysiwyg_button'] = plugins_url( '/js/uri-button-plugin.js', __FILE__ );
+    // load the custom panel plugin
+	$plugin_array['uri_wysiwyg_panel'] = plugins_url( '/js/uri-panel-plugin.js', __FILE__ );
+    // load the custom notice plugin
+	$plugin_array['uri_wysiwyg_notice'] = plugins_url( '/js/uri-notice-plugin.js', __FILE__ );
+
+
 	// load the custom cards plugin
 	$plugin_array['uri_wysiwyg_card'] = plugins_url( '/js/uri-card-plugin.js', __FILE__ );
     // load the custom heros plugin
 	$plugin_array['uri_wysiwyg_hero'] = plugins_url( '/js/uri-hero-plugin.js', __FILE__ );
 	// load the custom metric plugin
 	$plugin_array['uri_wysiwyg_metric'] = plugins_url( '/js/uri-metric-plugin.js', __FILE__ );
-    // load the custom notice plugin
-	$plugin_array['uri_wysiwyg_notice'] = plugins_url( '/js/uri-notice-plugin.js', __FILE__ );
-    // load the custom panel plugin
-	$plugin_array['uri_wysiwyg_panel'] = plugins_url( '/js/uri-panel-plugin.js', __FILE__ );
 	// load the custom quote plugin
 	$plugin_array['uri_wysiwyg_quote'] = plugins_url( '/js/uri-quote-plugin.js', __FILE__ );
     // load the custom video plugin
 	$plugin_array['uri_wysiwyg_video'] = plugins_url( '/js/uri-video-plugin.js', __FILE__ );
     // load the custom tiles plugin
 	$plugin_array['uri_wysiwyg_tiles'] = plugins_url( '/js/uri-tiles-plugin.js', __FILE__ );
+	// load the custom buttons plugin
+	$plugin_array['uri_wysiwyg_button'] = plugins_url( '/js/uri-button-plugin.js', __FILE__ );
 
 	return $plugin_array;
 }

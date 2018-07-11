@@ -55,6 +55,7 @@ class URIWYSIWYG {
 		s = s.replace(/"/g, "”");
 
 		// replace single prime with curly apostrophe
+		s = s.replace(/'\b/g, "‘");
 		s = s.replace(/'/g, "’");
 		
 		return s
